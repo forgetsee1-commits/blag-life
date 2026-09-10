@@ -154,12 +154,18 @@ body::after {
 }
 
 .splash-logo {
+    position: relative;
+    z-index: 5;
     font-size: 52px; font-weight: 900;
     letter-spacing: 6px; text-transform: uppercase;
     color: var(--ink);
     text-shadow: 4px 4px 0 var(--peach), 8px 8px 0 rgba(42,42,62,0.1);
     animation: logoPop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     opacity: 0; transform: scale(0.5);
+    text-align: center;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 @keyframes logoPop {
     0%   { opacity: 0; transform: scale(0.5) rotate(-8deg); }
@@ -168,12 +174,18 @@ body::after {
 }
 
 .splash-sub {
+    position: relative;
+    z-index: 5;
     margin-top: 16px;
     font-size: 14px; letter-spacing: 8px;
     text-transform: uppercase;
     color: var(--ink-soft);
     opacity: 0;
     animation: subFade 1s ease 0.8s forwards;
+    text-align: center;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 @keyframes subFade {
     from { opacity: 0; transform: translateY(10px); }
@@ -933,7 +945,6 @@ p {
 <div class="mini-panel">
     <button class="mini-btn" onclick="saveGame()">💾 Сохранить</button>
     <button class="mini-btn" onclick="showScene('referral')">🔗 Реферал</button>
-    <button class="mini-btn mini-btn-debug" onclick="player.age += 10; player.stats.health += 5; checkAgeEvents(); showScene('main');">⚡ +10 лет</button>
 </div>
 
     <div class="resource-bar">
