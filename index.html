@@ -144,9 +144,18 @@ body::after {
     background: linear-gradient(135deg, var(--cream) 0%, var(--mint) 50%, var(--peach) 100%);
     z-index: 999;
     display: flex; align-items: center; justify-content: center;
-    flex-direction: column;
     animation: splashFade 4s ease forwards;
     pointer-events: none;
+}
+
+.splash-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 340px;
+    height: 340px;
 }
 @keyframes splashFade {
     0%, 70% { opacity: 1; }
@@ -194,6 +203,8 @@ body::after {
 
 .splash-ring {
     position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
     width: 280px; height: 280px;
     border: 3px dashed var(--ink-soft);
     border-radius: 50%;
@@ -207,6 +218,8 @@ body::after {
 
 .splash-ring-2 {
     position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
     width: 340px; height: 340px;
     border: 2px dotted var(--peach-dark);
     border-radius: 50%;
@@ -857,10 +870,12 @@ p {
 
 <!-- ЗАСТАВКА -->
 <div class="splash-screen">
-    <div class="splash-ring"></div>
-    <div class="splash-ring-2"></div>
-    <div class="splash-logo">ЛАЙФ БЛАГА</div>
-    <div class="splash-sub">жизнь в благовещенске</div>
+    <div class="splash-inner">
+        <div class="splash-ring"></div>
+        <div class="splash-ring-2"></div>
+        <div class="splash-logo">ЛАЙФ БЛАГА</div>
+        <div class="splash-sub">жизнь в благовещенске</div>
+    </div>
 </div>
 
 <!-- СТАРТ -->
