@@ -870,6 +870,227 @@ body.time-evening .stars-bg {
     }
 }
 /* ============================================================
+   ДИСКОТЕКА — мигающие огни
+   ============================================================ */
+.disco-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.disco-bg.active {
+    opacity: 1;
+}
+
+/* Цветные прожекторы */
+.disco-light {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0;
+    mix-blend-mode: screen;
+    animation: discoMove 3s ease-in-out infinite;
+}
+
+.disco-light.pink {
+    background: radial-gradient(circle, rgba(232, 165, 152, 0.9) 0%, transparent 70%);
+    animation-delay: 0s;
+}
+.disco-light.blue {
+    background: radial-gradient(circle, rgba(168, 200, 220, 0.9) 0%, transparent 70%);
+    animation-delay: 0.5s;
+}
+.disco-light.purple {
+    background: radial-gradient(circle, rgba(201, 179, 217, 0.9) 0%, transparent 70%);
+    animation-delay: 1s;
+}
+.disco-light.yellow {
+    background: radial-gradient(circle, rgba(232, 196, 118, 0.9) 0%, transparent 70%);
+    animation-delay: 1.5s;
+}
+.disco-light.green {
+    background: radial-gradient(circle, rgba(168, 200, 160, 0.9) 0%, transparent 70%);
+    animation-delay: 2s;
+}
+
+@keyframes discoMove {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.6);
+    }
+    20% {
+        opacity: 0.7;
+        transform: translate(20vw, -10vh) scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: translate(-15vw, 20vh) scale(0.8);
+    }
+    80% {
+        opacity: 0.7;
+        transform: translate(30vw, 10vh) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.6);
+    }
+}
+
+/* Мигающие точки — как стробоскоп */
+.disco-spark {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px #fff, 0 0 20px #e8a598;
+    animation: discoSpark 1.5s ease-in-out infinite;
+    opacity: 0;
+}
+
+@keyframes discoSpark {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50%      { opacity: 1; transform: scale(1.3); }
+}
+
+/* Луч — вращающийся */
+.disco-beam {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    width: 200px;
+    height: 200%;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(232, 165, 152, 0.4) 20%,
+        rgba(168, 200, 220, 0.5) 50%,
+        rgba(201, 179, 217, 0.4) 80%,
+        transparent 100%);
+    transform-origin: 50% 50%;
+    transform: translateX(-50%) rotate(0deg);
+    filter: blur(20px);
+    animation: discoBeamRotate 6s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes discoBeamRotate {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to   { transform: translateX(-50%) rotate(360deg); }
+}
+/* ============================================================
+   ДОЖДЬ
+   ============================================================ */
+.rain-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+.rain-bg.active {
+    opacity: 1;
+}
+
+/* Капли — вертикальные штрихи */
+.raindrop {
+    position: absolute;
+    top: -20px;
+    width: 2px;
+    height: 80px;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(168, 200, 220, 0.15) 20%,
+        rgba(168, 200, 220, 0.7) 60%,
+        rgba(120, 160, 190, 0.9) 100%);
+    border-radius: 50% 50% 30% 30%;
+    filter: blur(0.5px);
+    animation: rainFall linear infinite;
+    box-shadow: 0 0 4px rgba(168, 200, 220, 0.4);
+}
+
+@keyframes rainFall {
+    0% {
+        transform: translateY(-100px) translateX(0) rotate(8deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) translateX(-30px) rotate(8deg);
+        opacity: 0;
+    }
+}
+
+/* Крупные медленные капли */
+.raindrop.big {
+    width: 3px;
+    height: 100px;
+    animation-duration: 1.8s;
+    filter: blur(1px);
+    box-shadow: 0 0 6px rgba(168, 200, 220, 0.6);
+}
+
+/* Мелкая морось — точки */
+.raindrop.small {
+    width: 1px;
+    height: 40px;
+    animation-duration: 1s;
+    opacity: 0.5;
+    filter: blur(0.3px);
+}
+
+/* Разводы на «стекле» — сверху */
+.rain-glass {
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(ellipse at 15% 25%, rgba(168, 200, 220, 0.15) 0%, transparent 8%),
+        radial-gradient(ellipse at 45% 15%, rgba(168, 200, 220, 0.12) 0%, transparent 6%),
+        radial-gradient(ellipse at 75% 35%, rgba(168, 200, 220, 0.15) 0%, transparent 9%),
+        radial-gradient(ellipse at 30% 65%, rgba(168, 200, 220, 0.1) 0%, transparent 7%),
+        radial-gradient(ellipse at 85% 70%, rgba(168, 200, 220, 0.13) 0%, transparent 8%);
+    pointer-events: none;
+    opacity: 0.6;
+    animation: rainGlassPulse 6s ease-in-out infinite;
+}
+
+@keyframes rainGlassPulse {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 0.4; }
+}
+
+/* Лёгкий туман внизу */
+.rain-fog {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30vh;
+    background: linear-gradient(0deg,
+        rgba(200, 210, 220, 0.15) 0%,
+        transparent 100%);
+    pointer-events: none;
+    animation: rainFogMove 8s ease-in-out infinite;
+}
+
+@keyframes rainFogMove {
+    0%, 100% { transform: translateX(0); opacity: 0.6; }
+    50%      { transform: translateX(20px); opacity: 0.4; }
+}
+/* ============================================================
    ДЕКОР СЦЕНЫ
    ============================================================ */
 .scene-box {
@@ -937,7 +1158,7 @@ body.time-evening .stars-bg {
     94%, 98%      { transform: scaleY(0.1); }
 }
 
-/* ===== КРОВЬ (для драк) ===== */
+/* ===== КРОВЬ (для драк) — v2 ===== */
 .decor-blood {
     position: absolute;
     inset: 0;
@@ -947,86 +1168,116 @@ body.time-evening .stars-bg {
     border-radius: inherit;
 }
 
-.decor-blood .blood-drop {
+/* Брызги — мелкие пятна на «стене» */
+.blood-splatter {
     position: absolute;
-    width: 8px;
-    height: 12px;
-    background: radial-gradient(ellipse at 50% 30%, #8a1a1a 0%, #4a0a0a 100%);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    box-shadow: 0 0 6px rgba(138, 26, 26, 0.7);
+    background: radial-gradient(ellipse at 40% 40%,
+        #8a1a1a 0%,
+        #6a0a0a 50%,
+        #4a0505 100%);
+    border-radius: 50%;
     opacity: 0.85;
-    animation: bloodDrip linear infinite;
+    box-shadow:
+        inset -1px -1px 2px rgba(0, 0, 0, 0.5),
+        0 0 4px rgba(138, 26, 26, 0.6);
+    animation: bloodSplatterIn 0.4s ease-out forwards;
+    transform: scale(0);
 }
 
-.decor-blood .blood-drop::after {
-    content: '';
+@keyframes bloodSplatterIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 0.85; }
+}
+
+/* Потёк — вертикальная полоса крови */
+.blood-drip {
     position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 20px;
-    background: linear-gradient(180deg, #8a1a1a 0%, transparent 100%);
-    opacity: 0.6;
+    top: 0;
+    width: 4px;
+    background: linear-gradient(180deg,
+        #8a1a1a 0%,
+        #6a0a0a 40%,
+        rgba(74, 10, 10, 0.6) 80%,
+        transparent 100%);
+    border-radius: 0 0 50% 50%;
+    opacity: 0;
+    animation: bloodDripDown 3s ease-in forwards;
 }
 
-@keyframes bloodDrip {
+@keyframes bloodDripDown {
     0% {
-        transform: translateY(-20px) scale(0.6);
         opacity: 0;
+        height: 0;
     }
-    10% {
+    15% {
         opacity: 0.9;
-        transform: translateY(0) scale(1);
-    }
-    90% {
-        opacity: 0.9;
+        height: 0;
     }
     100% {
-        transform: translateY(300px) scale(0.8);
-        opacity: 0;
+        opacity: 0.9;
+        height: var(--drip-length, 80px);
     }
 }
 
-.decor-blood .blood-drop:nth-child(1) {
-    top: -10px;
-    left: 20px;
-    animation-duration: 3s;
-    animation-delay: 0s;
-}
-
-.decor-blood .blood-drop:nth-child(2) {
-    top: -10px;
-    right: 30px;
-    animation-duration: 3.5s;
-    animation-delay: 0.8s;
-    width: 6px;
-    height: 10px;
-}
-
-.decor-blood .blood-drop:nth-child(3) {
-    top: -10px;
-    left: 45%;
-    animation-duration: 4s;
-    animation-delay: 1.5s;
+/* Капля внизу потёка — толстая */
+.blood-drip::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 10px;
-    height: 14px;
+    height: 12px;
+    background: radial-gradient(ellipse at 50% 30%, #8a1a1a 0%, #4a0505 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0;
+    animation: bloodDropAppear 3s ease-in forwards;
 }
 
-.decor-blood .blood-drop:nth-child(4) {
-    top: -10px;
-    left: 70%;
-    animation-duration: 3.2s;
-    animation-delay: 2.1s;
+@keyframes bloodDropAppear {
+    0%, 80% { opacity: 0; transform: translateX(-50%) scale(0); }
+    100%    { opacity: 1; transform: translateX(-50%) scale(1); }
 }
 
-.decor-blood .blood-drop:nth-child(5) {
-    top: -10px;
-    right: 15px;
-    animation-duration: 3.8s;
-    animation-delay: 2.8s;
-    width: 5px;
-    height: 9px;
+/* Пятно на полу / внизу */
+.blood-puddle {
+    position: absolute;
+    bottom: 10px;
+    background: radial-gradient(ellipse at 50% 30%,
+        #8a1a1a 0%,
+        #6a0a0a 40%,
+        #4a0505 100%);
+    border-radius: 50% 50% 40% 40% / 40% 40% 60% 60%;
+    opacity: 0.8;
+    box-shadow:
+        inset -2px -2px 4px rgba(0, 0, 0, 0.6),
+        0 0 8px rgba(138, 26, 26, 0.5);
+    animation: bloodPuddleIn 0.6s ease-out forwards;
+    transform: scale(0);
+}
+
+@keyframes bloodPuddleIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 0.8; }
+}
+
+/* Размазанный след — от удара */
+.blood-smear {
+    position: absolute;
+    background: linear-gradient(90deg,
+        rgba(138, 26, 26, 0) 0%,
+        rgba(138, 26, 26, 0.7) 30%,
+        rgba(106, 10, 10, 0.9) 70%,
+        rgba(74, 5, 5, 0.5) 100%);
+    border-radius: 50%;
+    filter: blur(2px);
+    opacity: 0;
+    animation: bloodSmearIn 0.8s ease-out forwards;
+}
+
+@keyframes bloodSmearIn {
+    from { opacity: 0; transform: scaleX(0.3); }
+    to   { opacity: 0.75; transform: scaleX(1); }
 }
 
 </style>
@@ -1038,6 +1289,12 @@ body.time-evening .stars-bg {
 
 <!-- ДЕКОР ФОНА (листья, пылинки) -->
 <div class="fg-decor" id="fgDecor"></div>
+
+<!-- ДОЖДЬ -->
+<div class="rain-bg" id="rainBg"></div>
+
+<!-- ДИСКОТЕКА -->
+<div class="disco-bg" id="discoBg"></div>
 
 <!-- СЕТКА -->
 <div class="grid-floor"></div>
@@ -1056,7 +1313,7 @@ body.time-evening .stars-bg {
 <div class="screen" id="startScreen">
     <div class="card">
         <h1>Симулятор <span class="accent">жизни</span></h1>
-        <p>Благовещенск. Бедный район. Тебе 10 лет.</p>
+        <p>Благовещенск. Бедный район.</p>
         <p>У тебя есть мама. Больше никого. Ты сам решаешь, кем станешь.</p>
         <p>Каждый выбор — навсегда.</p>
         <button class="btn full" onclick="showCreate()" style="margin-top:16px;">Начать</button>
@@ -1085,7 +1342,7 @@ body.time-evening .stars-bg {
 <div class="screen" id="prologue1" style="display:none;">
     <div class="card">
         <div style="text-align:center; font-size:56px; margin-bottom:10px;">👶</div>
-        <h2 style="text-align:center;">Ты родился</h2>
+        <h2 style="text-align:center;" id="prologue1Title">Ты родился</h2>
         <p>Благовещенск. Маленький роддом на окраине города.</p>
         <p>На тебя смотрит уставшая, но счастливая женщина — твоя мама. Отца нет — он ушёл, когда узнал о твоём рождении.</p>
         <p>Мама работает на заводе за копейки. Она держит тебя на руках и тихо шепчет: «Мы справимся. Обещаю».</p>
@@ -1111,8 +1368,8 @@ body.time-evening .stars-bg {
         <div style="text-align:center; font-size:56px; margin-bottom:10px;">🎒</div>
         <h2 style="text-align:center;">6 лет</h2>
         <p>Тебе 6. Первый звонок. Белый бант, галстук, портфель.</p>
-        <p>Школа №3 — дворовая, ближе к дому. Учителя строгие, дети разные. Кто-то из благополучных семей, кто-то такой же как ты.</p>
-        <p>Первый урок. Учительница обводит класс глазами и улыбается тебе. Ты ещё не знаешь, что это место станет твоим вторым домом на 8 лет.</p>
+        <p>Школа №2 — на другом конце района. Туда ходит мама, там работал кто-то из её знакомых. Учителя строгие, дети разные.</p>
+        <p>Первый урок. Учительница обводит класс глазами и улыбается тебе. Ты ещё не знаешь, что через три года это место придётся оставить.</p>
         <button class="btn full" onclick="showScreen('prologue4')" style="margin-top:16px;">Дальше</button>
     </div>
 </div>
@@ -1123,8 +1380,9 @@ body.time-evening .stars-bg {
         <div style="text-align:center; font-size:56px; margin-bottom:10px;">🌆</div>
         <h2 style="text-align:center;">10 лет</h2>
         <p>Тебе 10. Мама работает на двух работах. Денег всё равно не хватает — на ужин часто одна картошка.</p>
+        <p>Три года ты отучился в школе №2 — на другом конце района. Там были свои пацаны, свои драки, свои учителя. Но мама поругалась с завучем — и тебя перевели. Теперь ты идёшь в школу №3. Дворовую, ближе к дому. Там ты никого не знаешь.</p>
         <p>Ты уже понимаешь: в этом районе либо ты кем-то становишься, либо тебя ломают. Двор учит быстро.</p>
-        <p><strong>Сегодня 1 сентября. Начало учебного года.</strong> С этого дня начинается твоя история.</p>
+        <p><strong>Сегодня 1 сентября. Первый день в новой школе.</strong> С этого дня начинается твоя история.</p>
         <button class="btn full" onclick="startLife()" style="margin-top:16px;">Начать жизнь</button>
     </div>
 </div>
@@ -1204,6 +1462,11 @@ function nextStep(){
     const nameInput = document.getElementById('nameInput').value.trim();
     player.name = nameInput || 'Безымянный';
     if (!player.gender) player.gender = '🧑';
+
+    // Подгоняем заголовок пролога под пол
+    const t1 = document.getElementById('prologue1Title');
+    if (t1) t1.textContent = isGirl() ? 'Ты родилась' : 'Ты родился';
+
     document.getElementById('createScreen').style.display = 'none';
     showScreen('prologue1');
 }
@@ -1230,8 +1493,10 @@ function startLife(){
         happiness: 4
     };
 
-    // Школа
-    player.school = 3;
+        // Школа
+    player.school = 3;              // текущая школа
+    player.oldSchool = 2;           // старая школа (откуда перевёлся)
+    player.oldSchoolFriends = [];   // друзья из старой школы (появятся позже)
 
     // Сюжетные персонажи
     player.mom = {
@@ -1306,6 +1571,79 @@ const day3Scenes = [
     'day3_decline_disco','day3_ask_disco','day3_disco_go','day3_disco_mix',
     'day3_disco_watch','day3_disco_shy','day3_disco_scene','day3_disco_end','day3_home'
 ];
+/* ============================================================
+   АВТОЗАМЕНА РОДА — genderFix
+   ============================================================ */
+const GENDER_DICT = [
+    // Пары [мужской, женский]
+    ['малой', 'малая'],
+    ['Малой', 'Малая'],
+    ['малому', 'малой'],
+    ['малым', 'малой'],
+    ['сынок', 'дочка'],
+    ['сын', 'дочь'],
+    ['сына', 'дочь'],
+    ['сыну', 'дочери'],
+    ['сам', 'сама'],
+    ['самый', 'самая'],
+    ['один', 'одна'],
+    ['готов', 'готова'],
+    ['рад', 'рада'],
+    ['должен', 'должна'],
+    ['виноват', 'виновата'],
+    ['уверен', 'уверена'],
+    ['согласен', 'согласна'],
+    ['понял', 'поняла'],
+    ['забыл', 'забыла'],
+    ['лучший', 'лучшая'],
+    ['взрослый', 'взрослая'],
+    ['маленький', 'маленькая'],
+    ['смелый', 'смелая'],
+    ['сильный', 'сильная'],
+    ['умный', 'умная'],
+    ['слабый', 'слабая'],
+    ['свой', 'своя'],
+    ['чужой', 'чужая'],
+    ['новенький','новенькая'],
+    ['новый', 'новая']
+];
+
+function genderFix(text){
+    if (!text || typeof text !== 'string') return text;
+    if (!isGirl()) return text;
+
+    let result = text;
+
+    for (const [male, female] of GENDER_DICT){
+        // Ручной поиск с проверкой границ (работает с кириллицей)
+        let pos = 0;
+        let out = '';
+        while (pos < result.length){
+            const idx = result.indexOf(male, pos);
+            if (idx === -1){
+                out += result.slice(pos);
+                break;
+            }
+            const before = idx > 0 ? result[idx - 1] : '';
+            const after = idx + male.length < result.length ? result[idx + male.length] : '';
+            const isLetterBefore = /[а-яА-ЯёЁa-zA-Z]/.test(before);
+            const isLetterAfter = /[а-яА-ЯёЁa-zA-Z]/.test(after);
+
+            if (!isLetterBefore && !isLetterAfter){
+                // Слово целиком — заменяем
+                out += result.slice(pos, idx) + female;
+                pos = idx + male.length;
+            } else {
+                // Это часть другого слова — оставляем
+                out += result.slice(pos, idx + male.length);
+                pos = idx + male.length;
+            }
+        }
+        result = out;
+    }
+
+    return result;
+}
 
 /* ============================================================
    ДВИЖОК СЦЕН — СИСТЕМА УЗЛОВ
@@ -1324,8 +1662,7 @@ function showScene(id){
         return;
     }
 
-    currentScene = id;
-    updateResourceBar();
+        currentScene = id;
 
     // ===== ВРЕМЯ СУТОК =====
     const time = node.time || 'day';
@@ -1334,23 +1671,29 @@ function showScene(id){
 
     if (typeof node.onEnter === 'function') node.onEnter();
 
+    // Обновляем баланс ПОСЛЕ onEnter (деньги могли измениться)
+    updateResourceBar();
+
         const box = document.getElementById('sceneBox');
     box.className = 'scene-box';
 
     const choices = typeof node.choices === 'function' ? node.choices() : (node.choices || []);
 
-    let choicesHTML = '';
+        let choicesHTML = '';
     choices.forEach((c, i) => {
         const cls = c.style === 'back' ? 'choice-btn back' : 'choice-btn';
-        choicesHTML += `<button class="${cls}" onclick="doChoice('${id}', ${i})">${c.text}</button>`;
+        const choiceText = genderFix(c.text);
+        choicesHTML += `<button class="${cls}" onclick="doChoice('${id}', ${i})">${choiceText}</button>`;
     });
 
-    const titleText = typeof node.title === 'function' ? node.title() : (node.title || '');
+        const titleRaw = typeof node.title === 'function' ? node.title() : (node.title || '');
+    const titleText = genderFix(titleRaw);
     const titleHTML = titleText ? `<div class="scene-title">${titleText}</div>` : '';
 
     const emojiHTML = node.emoji ? `<div class="scene-emoji">${node.emoji}</div>` : '';
 
-    const text = typeof node.text === 'function' ? node.text() : (node.text || '');
+    const textRaw = typeof node.text === 'function' ? node.text() : (node.text || '');
+    const text = genderFix(textRaw);
     const textHTML = text ? `<div class="scene-text">${text}</div>` : '';
 
         // ===== ДЕКОР =====
@@ -1377,6 +1720,30 @@ function showScene(id){
         // Листья — осень в сентябре
         if (day1Scenes.includes(id) || day2Scenes.includes(id) || day3Scenes.includes(id)){
             setTimeout(() => fg.classList.add('active'), 100);
+        }
+    }
+
+        // ===== ДОЖДЬ =====
+    const rainBg = document.getElementById('rainBg');
+    if (rainBg){
+        const decorList = (node.decor || '').split(',').map(s => s.trim());
+        if (decorList.includes('rain')){
+            generateRaindrops();
+            setTimeout(() => rainBg.classList.add('active'), 100);
+        } else {
+            rainBg.classList.remove('active');
+        }
+    }
+
+    // ===== ДИСКОТЕКА =====
+    const discoBg = document.getElementById('discoBg');
+    if (discoBg){
+        const decorList = (node.decor || '').split(',').map(s => s.trim());
+        if (decorList.includes('disco')){
+            generateDiscoLights();
+            setTimeout(() => discoBg.classList.add('active'), 100);
+        } else {
+            discoBg.classList.remove('active');
         }
     }
 
@@ -1465,15 +1832,161 @@ function renderCatDecor(){
 }
 
 function renderBloodDecor(){
+    // Брызги — рандомно по всему полю
+    let splatters = '';
+    for (let i = 0; i < 12; i++){
+        const size = 4 + Math.random() * 14;
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const delay = (Math.random() * 0.3).toFixed(2);
+        splatters += `<div class="blood-splatter" style="
+            left: ${left}%;
+            top: ${top}%;
+            width: ${size}px;
+            height: ${size}px;
+            animation-delay: ${delay}s;
+        "></div>`;
+    }
+
+    // Потёки — с верхней части рамки вниз
+    let drips = '';
+    const dripPositions = [12, 28, 45, 62, 78, 90];
+    dripPositions.forEach((pos, i) => {
+        const length = 60 + Math.random() * 120;
+        const width = 3 + Math.random() * 3;
+        const delay = (i * 0.15).toFixed(2);
+        drips += `<div class="blood-drip" style="
+            left: ${pos}%;
+            width: ${width}px;
+            --drip-length: ${length}px;
+            animation-delay: ${delay}s;
+        "></div>`;
+    });
+
+    // Пятно внизу
+    let puddles = '';
+    const puddlePositions = [25, 70];
+    puddlePositions.forEach((pos, i) => {
+        const w = 40 + Math.random() * 30;
+        const h = 12 + Math.random() * 8;
+        const delay = (i * 0.3 + 0.4).toFixed(2);
+        puddles += `<div class="blood-puddle" style="
+            left: ${pos}%;
+            width: ${w}px;
+            height: ${h}px;
+            animation-delay: ${delay}s;
+        "></div>`;
+    });
+
+    // Размазы
+    let smears = '';
+    const smearPositions = [
+        { left: 10, top: 40, w: 80, rot: -15 },
+        { left: 55, top: 55, w: 100, rot: 10 }
+    ];
+    smearPositions.forEach((s, i) => {
+        const delay = (i * 0.2 + 0.2).toFixed(2);
+        smears += `<div class="blood-smear" style="
+            left: ${s.left}%;
+            top: ${s.top}%;
+            width: ${s.w}px;
+            height: 6px;
+            transform: rotate(${s.rot}deg);
+            animation-delay: ${delay}s;
+        "></div>`;
+    });
+
     return `
         <div class="decor-blood">
-            <div class="blood-drop"></div>
-            <div class="blood-drop"></div>
-            <div class="blood-drop"></div>
-            <div class="blood-drop"></div>
-            <div class="blood-drop"></div>
+            ${splatters}
+            ${drips}
+            ${puddles}
+            ${smears}
         </div>
     `;
+}
+function renderRainDecor(){
+    return `
+        <div class="rain-glass"></div>
+        <div class="rain-fog"></div>
+    `;
+}
+
+function generateRaindrops(){
+    const bg = document.getElementById('rainBg');
+    if (!bg) return;
+    bg.innerHTML = '';
+
+    // 60 крупных капель
+    for (let i = 0; i < 60; i++){
+        const drop = document.createElement('div');
+        drop.className = 'raindrop';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
+        drop.style.animationDelay = Math.random() * 2 + 's';
+        bg.appendChild(drop);
+    }
+
+    // 30 крупных (медленных)
+    for (let i = 0; i < 30; i++){
+        const drop = document.createElement('div');
+        drop.className = 'raindrop big';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDuration = (1.4 + Math.random() * 1) + 's';
+        drop.style.animationDelay = Math.random() * 3 + 's';
+        bg.appendChild(drop);
+    }
+
+    // 40 мелких (морось)
+    for (let i = 0; i < 40; i++){
+        const drop = document.createElement('div');
+        drop.className = 'raindrop small';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDuration = (0.8 + Math.random() * 0.4) + 's';
+        drop.style.animationDelay = Math.random() * 2 + 's';
+        bg.appendChild(drop);
+    }
+
+    // Разводы и туман
+    const glass = document.createElement('div');
+    glass.className = 'rain-glass';
+    bg.appendChild(glass);
+
+    const fog = document.createElement('div');
+    fog.className = 'rain-fog';
+    bg.appendChild(fog);
+}
+function generateDiscoLights(){
+    const bg = document.getElementById('discoBg');
+    if (!bg) return;
+    bg.innerHTML = '';
+
+    // 5 цветных прожекторов
+    const colors = ['pink', 'blue', 'purple', 'yellow', 'green'];
+    colors.forEach((color, i) => {
+        const light = document.createElement('div');
+        light.className = 'disco-light ' + color;
+        light.style.left = (10 + i * 15) + '%';
+        light.style.top = (20 + (i % 3) * 20) + '%';
+        light.style.animationDelay = (i * 0.4) + 's';
+        bg.appendChild(light);
+    });
+
+    // Вращающийся луч
+    const beam = document.createElement('div');
+    beam.className = 'disco-beam';
+    bg.appendChild(beam);
+
+    // 30 мигающих точек
+    for (let i = 0; i < 30; i++){
+        const spark = document.createElement('div');
+        spark.className = 'disco-spark';
+        spark.style.left = Math.random() * 100 + '%';
+        spark.style.top = Math.random() * 100 + '%';
+        spark.style.animationDelay = Math.random() * 2 + 's';
+        spark.style.animationDuration = (1 + Math.random() * 1.5) + 's';
+        bg.appendChild(spark);
+    }
 }
 
 function doChoice(sceneId, index){
@@ -1494,6 +2007,7 @@ function doChoice(sceneId, index){
    ОТРИСОВКА РЕСУРСОВ
    ============================================================ */
 function updateResourceBar(){
+    if (player.money < 0) player.money = 0;
     document.getElementById('resMoney').textContent = player.money + '₽';
     document.getElementById('resDay').textContent = player.day || 1;
     document.getElementById('resAge').textContent = player.age || 10;
@@ -1509,11 +2023,11 @@ function showToast(emoji, title, text){
     const overlay = document.createElement('div');
     overlay.className = 'toast-overlay';
     overlay.id = 'toastOverlay';
-    overlay.innerHTML = `
+        overlay.innerHTML = `
         <div class="toast">
             <div class="toast-emoji">${emoji}</div>
-            <div class="toast-title">${title}</div>
-            <div class="toast-text">${text}</div>
+            <div class="toast-title">${genderFix(title)}</div>
+            <div class="toast-text">${genderFix(text)}</div>
             <button class="toast-btn" onclick="closeToast()">Понятно</button>
         </div>
     `;
@@ -1533,7 +2047,7 @@ function renderStatsScreen(){
     const mom = player.mom || {};
     const enemy = player.enemy || {};
 
-    const text = `
+    const text = genderFix(`
 👤 ${player.name} ${player.gender || ''}
 🎂 Возраст: ${player.age}
 📅 День: ${player.day}
@@ -1547,7 +2061,7 @@ function renderStatsScreen(){
 
 👩 Мама — отношение: ${mom.relationship || 0} / 20
 👿 Влад — вражда: ${Math.abs(enemy.relationship || 0)} / 20
-    `.trim();
+    `.trim());
 
     const box = document.getElementById('sceneBox');
     box.innerHTML = `
@@ -1566,7 +2080,7 @@ function renderAchievementsScreen(){
     if (player.friends >= 5) a.push('🤝 Душа компании');
     if (player.storyDone && Object.keys(player.storyDone).length >= 3) a.push('📖 Первые главы');
 
-    const text = a.length ? a.join('\n') : 'Пока пусто. Живи — появятся.';
+        const text = genderFix(a.length ? a.join('\n') : 'Пока пусто. Живи — появятся.');
 
     const box = document.getElementById('sceneBox');
     box.innerHTML = `
@@ -1585,6 +2099,7 @@ function renderSummaryScreen(){
     if (player.mom) text += `👩 Мама: отношение ${player.mom.relationship}/20\n`;
     if (player.mentor) text += `🎓 Наставник: ${player.mentor.name}\n`;
     if (player.brother) text += `🧑 Брат: ${player.brother.name}\n`;
+        text = genderFix(text);
 
     const box = document.getElementById('sceneBox');
     box.innerHTML = `
@@ -1617,6 +2132,12 @@ function resetGame(){
 /* ============================================================
    СТАТЫ — быстрое изменение
    ============================================================ */
+   function money(delta){
+    if (!player.money) player.money = 0;
+    player.money += delta;
+    if (player.money < 0) player.money = 0;
+    updateResourceBar();
+}
 function stat(key, delta){
     if (player.stats[key] === undefined) player.stats[key] = 0;
     player.stats[key] += delta;
@@ -1657,13 +2178,12 @@ function nextDay(){
    ============================================================ */
 function nextAct(){
     player.age = 11;
+    player.day = 1; 
     player.storyDay = 1;
     dayFlags = {};
 
-    showToast('🎂', 'Тебе 11', 'Прошёл год. Ты повзрослел.');
-    setTimeout(() => {
-        showScene('main');
-    }, 1800);
+    // Сцена перехода
+    showScene('act_transition');
 }
 
 /* ============================================================
@@ -1730,7 +2250,7 @@ referral: {
         { text: '🔗 Поделиться', action: () => {
             if (chance(0.5)){
                 player.referrals = (player.referrals || 0) + 1;
-                player.money += 500;
+                money(500);
                 showToast('🔗','Реферал','Друг зашёл! +500₽');
             } else {
                 showToast('😔','Реферал','Пока никто.');
@@ -1807,13 +2327,13 @@ day1_lineup: {
     emoji: '🎒',
     time: 'day',
     title: 'Линейка',
-    text: () => {
-        return `Директор что-то говорит в микрофон. Дети шумят, родители фоткают.\n\nТы стоишь в строю. Рядом — пацан, который смотрит на тебя с интересом.\n\n«Ты новенький?» — спрашивает он.`;
+       text: () => {
+        return `Директор что-то говорит в микрофон. Дети шумят, родители фоткают.\n\nТы стоишь в строю. Рядом — пацан, который смотрит на тебя с интересом.\n\n«Ты ${g('новенький','новенькая')}?» — спрашивает он.`;
     },
     choices: [
-        { text: '😊 Да, я новый. А ты?', next: 'day1_meet_yanchik' },
-        { text: '😐 Молча кивнуть', next: 'day1_ignore_yanchik' }
-    ]
+    { text: '😊 Да, я ' + g('новый','новая') + '. А ты?', next: 'day1_meet_yanchik' },
+    { text: '😐 Молча кивнуть', next: 'day1_ignore_yanchik' }
+]
 },
 
 day1_meet_yanchik: {
@@ -1919,7 +2439,7 @@ day1_break: {
     time: 'day',
     title: 'Перемена',
     text: () => {
-        return `Звонок. Все выходят в коридор. Ты стоишь у окна.\n\nВдруг сзади голос:\n\n«Эй, новенький. Чё это у тебя кроссовки такие? В секонд-хенде брал?»\n\nЭто Влад. Он стоит с двумя пацанами и ржёт.`;
+        return `Звонок. Все выходят в коридор. Ты стоишь у окна.\n\nВдруг сзади голос:\n\n«Эй, ${g('новенький','новенькая')}. Чё это у тебя кроссовки такие? В секонд-хенде ${g('брал','брала')}?»\n\nЭто Влад. Он стоит с двумя пацанами и ржёт.`;
     },
     choices: [
         { text: '😡 Ответить резко', next: 'day1_vlad_angry' },
@@ -1933,9 +2453,10 @@ day1_vlad_angry: {
     time: 'day',
     title: 'Резко',
     text: () => {
-        return `«А тебе какое дело, лощёный?»\n\nВлад на секунду теряется, потом ухмыляется: «А ты дерзкий. Ладно, посмотрим, как ты запоёшь».\n\nОн уходит. Янчик рядом шепчет: «Зря ты так. У него отец в администрации».`;
-    },
+                return `«А тебе какое дело, лощёный?»\n\nВлад на секунду теряется, потом ухмыляется: «А ты ${g('дерзкий','дерзкая')}. Ладно, посмотрим, как ты запоёшь».\n\nОн уходит. Янчик рядом шепчет: «Зря ты так. У него отец в администрации».`;
+                },
     onEnter: () => {
+        dayFlags.vladReaction = 'angry';
         statEnemy('relationship', -2);
         player.enemies = (player.enemies || 0) + 1;
     },
@@ -1952,6 +2473,7 @@ day1_vlad_silent: {
         return `Ты молчишь. Влад ржёт громче: «Чё, язык проглотил?»\n\nНо потом ему становится скучно, и он уходит. Пацаны за ним.\n\nЧто-то внутри тебя сжалось.`;
     },
     onEnter: () => {
+        dayFlags.vladReaction = 'silent';
         stat('happiness', -2);
         statEnemy('relationship', -1);
     },
@@ -1968,6 +2490,7 @@ day1_vlad_joke: {
         return `«Секонд-хенд? Да у нас весь район в нём одевается. Ты чё, с Луны свалился?»\n\nПацаны Влада ржут — но уже НАД НИМ. Влад краснеет и уходит.`;
     },
     onEnter: () => {
+        dayFlags.vladReaction = 'joke';
         if (player.stats.charisma >= 5) {
             stat('charisma', 1);
             stat('happiness', 2);
@@ -2059,6 +2582,7 @@ day1_sleep: {
 day2_start: {
     emoji: '🌧️',
     time: 'morning',
+    decor: 'rain',
     title: 'Утро · вторник',
     text: () => {
         const vlad = dayFlags.vladReaction || 'default';
@@ -2078,6 +2602,7 @@ day2_start: {
 day2_umbrella: {
     emoji: '☂️',
     time: 'morning',
+    decor: 'rain',
     title: 'С зонтом',
     text: () => {
         return `Ты берёшь старый мамин зонт — чёрный, с одной сломанной спицей.\n\nПо дороге ты сухой. Остальные — мокрые. Мелочь, а приятно.`;
@@ -2093,6 +2618,7 @@ day2_umbrella: {
 day2_no_umbrella: {
     emoji: '🌧️',
     time: 'morning',
+    decor: 'rain',
     title: 'Без зонта',
     text: () => {
         return `Ты выходишь без зонта. Дождь бьёт по лицу, куртка намокает за минуту.\n\nК школе ты приходишь мокрый как мышь. Кто-то смотрит и хихикает.`;
@@ -2109,15 +2635,16 @@ day2_no_umbrella: {
 day2_school: {
     emoji: '🏫',
     time: 'day',
+    decor: 'rain',
     title: 'Школа',
     text: () => {
-        const yan = player.yanchik && player.yanchik.relationship >= 3;
-        let yanLine = '';
-        if (yan) yanLine = 'Янчик машет тебе из коридора: «Здорово, братан!»';
-        else yanLine = 'Янчик стоит в стороне и не смотрит на тебя.';
+    const yan = player.yanchik && player.yanchik.relationship >= 3;
+    let yanLine = '';
+    if (yan) yanLine = `Янчик машет тебе из коридора: «Здорово!»`;
+    else yanLine = 'Янчик стоит в стороне и не смотрит на тебя.';
 
-        return `В школе шумно. Все обсуждают вчерашнее.\n\n${yanLine}\n\nНа первом уроке — литература. Учительница задаёт вопрос: «Кто прочитал стихотворение Пушкина?»`;
-    },
+    return `В школе шумно. Все обсуждают вчерашнее.\n\n${yanLine}\n\nНа первом уроке — литература. Учительница задаёт вопрос: «Кто прочитал стихотворение Пушкина?»`;
+},
     choices: [
         { text: '✋ Поднять руку', next: 'day2_answer' },
         { text: '😐 Промолчать', next: 'day2_silent' }
@@ -2127,6 +2654,7 @@ day2_school: {
 day2_answer: {
     emoji: '📖',
     time: 'day',
+    decor: 'rain',
     title: 'Ответ',
     text: () => {
         return `Ты поднимаешь руку и читаешь стих наизусть.\n\n«Мороз и солнце; день чудесный...»\n\nОльга Петровна улыбается: «Молодец, ${player.name}. Пятёрка».`;
@@ -2143,6 +2671,7 @@ day2_answer: {
 day2_silent: {
     emoji: '😐',
     time: 'day',
+    decor: 'rain',
     title: 'Промолчал',
     text: () => {
         return `Ты опускаешь глаза в парту. Учительница вызывает кого-то другого.\n\nВнутри ты понимаешь: надо было ответить.`;
@@ -2158,9 +2687,10 @@ day2_silent: {
 day2_break: {
     emoji: '🔔',
     time: 'day',
+    decor: 'rain',
     title: 'Перемена · Влад',
     text: () => {
-        return `Ты выходишь в коридор. К тебе подходит Влад с пацанами.\n\n«Слышь, я тут подумал. Ты норм пацан, если по-нормальному. Есть тема — хочешь двинуться после школы? Есть одно место на Седова. Милк. Там наши тусят».\n\nОн смотрит на тебя в упор. Янчик за спиной тихо говорит: «Не ходи. Это развод».`;
+        return `Ты выходишь в коридор. К тебе подходит Влад с пацанами.\n\n«Слышь, я тут подумал. Ты норм, если по-нормальному. Есть тема — хочешь двинуться после школы? Есть одно место на Седова. Милк. Там наши тусят».\n\nОн смотрит на тебя в упор. Янчик за спиной тихо говорит: «Не ходи. Это развод».`;
     },
     choices: [
         { text: '🤝 Согласиться', next: 'day2_agree_vlad' },
@@ -2172,6 +2702,7 @@ day2_break: {
 day2_agree_vlad: {
     emoji: '🤝',
     time: 'day',
+    decor: 'rain',
     title: 'Согласился',
     text: () => {
         return `«Ну ладно, зайду». Влад ухмыляется: «Не пожалеешь». Пацаны за спиной переглядываются.\n\nЯнчик молча смотрит тебе вслед.`;
@@ -2188,6 +2719,7 @@ day2_agree_vlad: {
 day2_decline_vlad: {
     emoji: '🚫',
     time: 'day',
+    decor: 'rain',
     title: 'Отказался',
     text: () => {
         return `«Не, я домой». Влад пожимает плечами: «Ну и лох». Пацаны ржут.\n\nЯнчик подходит: «Правильно сделал. Он мутит какую-то хуйню, я знаю».`;
@@ -2205,10 +2737,11 @@ day2_decline_vlad: {
 day2_ask_vlad: {
     emoji: '🤔',
     time: 'day',
+    decor: 'rain',
     title: 'Спросил',
     text: () => {
-        return `«Какие ещё ваши?» Влад на секунду теряется, потом ржёт: «Шальные, блять. Ты чё, с луны свалился? Тебя кто вообще сюда пустил».\n\nОн уходит с пацанами, а Янчик шепчет: «Шальные — это команда культурно-массового досуга. Они дискотеки в ЦРК делают. Но у них свои тёрки с ментами бывают».`;
-    },
+               return `«Какие ещё ваши?» Влад на секунду теряется, потом ржёт: «Шальные, блять. Ты чё, с луны ${g('свалился','свалилась')}? Тебя кто вообще сюда пустил».\n\nОн уходит с пацанами, а Янчик шепчет: «Шальные — это команда культурно-массового досуга. Они дискотеки в ЦРК делают. Но у них свои тёрки с ментами бывают».`;
+    }, 
     onEnter: () => {
         statEnemy('relationship', -1);
         if (player.yanchik) player.yanchik.relationship += 1;
@@ -2248,8 +2781,8 @@ day2_milk: {
     time: 'evening',
     title: 'Милк · Седова 113',
     text: () => {
-        return `Кафе «Милк» на Седова. Внутри светло, пахнет бургерами.\n\nВлад сидит с тремя пацанами. Один из них — здоровый, в спортивке, с цепью на шее. Это Кирилл. У него на костяшках наколки.\n\n«Слышь, ${player.name}, садись. Мы тут с пацанами тему мутим. Кароче, есть один замут. На ГАИ. Хочешь участвовать — бабки будут».\n\nОн смотрит на тебя как на мясо.`;
-    },
+                return `Кафе «Милк» на Седова. Внутри светло, пахнет бургерами.\n\nВлад сидит с тремя пацанами. Один из них — здоровый, в спортивке, с цепью на шее. Это Кирилл. У него на костяшках наколки. Про него в районе говорят разное — то ли он с Шальными, то ли сам по себе. Но его знают все.\n\n«Слышь, ${player.name}, садись. Мы тут с пацанами тему мутим. Кароче, есть один замут. На ГАИ. Хочешь участвовать — бабки будут».\n\nОн смотрит на тебя как на мясо.`;
+            },    
     choices: [
         { text: '💰 Спросить сколько', next: 'day2_milk_ask' },
         { text: '🚫 Отказаться и уйти', next: 'day2_milk_leave' }
@@ -2291,6 +2824,7 @@ day2_milk_leave: {
 day2_park_kiselev: {
     emoji: '🏞️',
     time: 'evening',
+    decor: 'rain',
     title: 'Парк Киселёва',
     text: () => {
         return `Вы с Янчиком идёте в парк Киселёва. Там памятник праведнику, тир, старая аллея.\n\nЯнчик рассказывает: «Тут раньше все тусили. Сейчас больше на Резинке — это у самого парка, за гаражами. Знаешь где?»`;
@@ -2338,7 +2872,7 @@ day2_end: {
     time: 'night',
     title: 'Конец дня',
     text: () => {
-        return `Ты идёшь домой. В голове вертится разговор в Милке.\n\nКирилл, Шальные, ГАИ...\n\nТы чувствуешь, что что-то начинается. Что-то серьёзное.`;
+        return `Ты идёшь домой. В голове вертится разговор в Милке.\n\nКирилл, ГАИ...\n\nТы чувствуешь, что что-то начинается. Что-то серьёзное.`;
     },
     choices: [
         { text: '➡️ Следующий день', action: () => { nextDay(); } }
@@ -2353,8 +2887,25 @@ day2_home: {
         return `Ты дома. Мама уже вернулась, сидит на кухне с чаем.\n\n«Как дела, ${g('сынок','дочка')}?»`;
     },
     choices: [
-        { text: '💬 Рассказать про день', next: 'day2_mom_talk' },
+        { text: '😊 Хорошо', next: 'day2_mom_good' },
+        { text: '😔 Плохо — рассказать', next: 'day2_mom_talk' },
         { text: '😐 Сказать «норм»', next: 'day2_mom_short' }
+    ]
+},
+
+day2_mom_good: {
+    emoji: '👩',
+    time: 'evening',
+    title: 'Мама',
+    text: () => {
+        return `«Хорошо». Мама улыбается, но что-то в её взгляде — не верит.\n\n«Ну и славно. Ешь давай».\n\nОна гладит тебя по голове и уходит к плите.`;
+    },
+    onEnter: () => {
+        statMom('relationship', 1);
+        stat('happiness', 1);
+    },
+    choices: [
+        { text: '😴 Спать', next: 'day2_sleep' }
     ]
 },
 
@@ -2363,14 +2914,14 @@ day2_mom_talk: {
     time: 'evening',
     title: 'Разговор с мамой',
     text: () => {
-        return `Ты рассказываешь про школу, про Янчика, про Влада. Мама слушает внимательно.\n\n«Слушай, ${player.name}. Всякое бывает. Но ты держись подальше от плохих компаний. Обещаешь?»`;
+        return `Ты рассказываешь, как тяжело. Про школу, про Влада, про то, что не понимаешь, как жить дальше.\n\nМама слушает молча. Потом говорит:\n\n«Знаешь что, ${g('сынок','дочка')}. Жизнь — она вообще несправедливая штука. Но у тебя есть голова на плечах и руки. Это уже много. Не сдавайся. И не лезь туда, где тебе не место».\n\nОна обнимает тебя.`;
     },
     onEnter: () => {
-        statMom('relationship', 2);
+        statMom('relationship', 3);
         stat('happiness', 1);
     },
     choices: [
-        { text: '🤝 Обещаю', next: 'day2_sleep' },
+        { text: '🤝 Спасибо, мама', next: 'day2_sleep' },
         { text: '😐 Промолчать', next: 'day2_silent_promise' }
     ]
 },
@@ -2600,9 +3151,10 @@ day3_ask_disco: {
 day3_disco_go: {
     emoji: '🕺',
     time: 'evening',
+    decor: 'disco',
     title: 'ЦРК · дискотека',
     text: () => {
-        return `ЦРК. Бывший ГДК. Огромное здание с фонтаном (летом).\n\nВнутри — музыка, свет, толпа. Янчик тянет тебя через толпу.\n\nНа сцене парень с микрофоном — это вожак Шальных. Зовут его Влад... но другой Влад. Взрослый. Лет 20.\n\n«Йо, малые! Сегодня отрываемся!»`;
+                return `ЦРК. Бывший ГДК. Огромное здание с фонтаном (летом).\n\nВнутри — музыка, свет, толпа. Янчик тянет тебя через толпу.\n\nНа сцене парень с микрофоном. Он старше всех — лет 20, не меньше. Янчик шепчет: «Это Влад. Вожак Шальных. Только не тот Влад, который в школе. Это совсем другой человек».\n\n«Йо, малые! Сегодня отрываемся!» — кричит он в микрофон.`;
     },
     choices: [
         { text: '🔥 Влиться в движ', next: 'day3_disco_mix' },
@@ -2613,6 +3165,7 @@ day3_disco_go: {
 day3_disco_mix: {
     emoji: '🔥',
     time: 'evening',
+    decor: 'disco',
     title: 'Вливаешься',
     text: () => {
         return `Ты танцуешь. Кто-то толкает тебя — ты толкаешь обратно. Все ржут.\n\nЯнчик: «Красава! Так и надо!»\n\nНесколько пацанов смотрят на тебя с интересом.`;
@@ -2630,6 +3183,7 @@ day3_disco_mix: {
 day3_disco_watch: {
     emoji: '🚶',
     time: 'evening',
+    decor: 'disco',
     title: 'Наблюдаешь',
     text: () => {
         return `Ты стоишь в стороне. Смотришь, как веселятся другие.\n\nКто-то подходит: «Ты чё стоишь как еблан? Идём танцевать!»\n\nЭто девчонка. Улыбается.`;
@@ -2647,6 +3201,7 @@ day3_disco_watch: {
 day3_disco_shy: {
     emoji: '🤐',
     time: 'evening',
+    decor: 'disco',
     title: 'Стесняешься',
     text: () => {
         return `Ты мычишь что-то. Девчонка пожимает плечами и уходит к другим.\n\nЯнчик рядом: «Зря, братан. Она норм».`;
@@ -2662,6 +3217,7 @@ day3_disco_shy: {
 day3_disco_scene: {
     emoji: '🎤',
     time: 'evening',
+    decor: 'disco',
     title: 'У сцены',
     text: () => {
         return `Ты подходишь к сцене. Взрослый Влад смотрит на тебя: «Э, малой. Ты кто?»\n\nЯнчик рядом шепчет: «Скажи имя».`;
@@ -2685,6 +3241,7 @@ day3_disco_scene: {
 day3_disco_end: {
     emoji: '🌙',
     time: 'night',
+    decor: 'disco',
     title: 'После дискотеки',
     text: () => {
         return `Дискотека закончилась. Вы с Янчиком идёте домой.\n\nЯнчик: «Ну чё, как тебе движ?»\n\nТы чувствуешь — что-то изменилось. Ты теперь не просто малой из школы. Ты — часть чего-то.`;
@@ -2718,12 +3275,17 @@ day3_home: {
    СЮЖЕТ · ДЕНЬ 4 (суббота)
    ============================================================ */
 
+
+
 day4_start: {
     emoji: '☔',
     time: 'morning',
     title: 'Суббота · утро',
     text: () => {
-        return `Ты просыпаешься от того, что кто-то кашляет. Из спальни мамы.\n\nТы заходишь — мама лежит, вся красная, температура. Она шепчет:\n\n«${player.name}, сынок… дочка… сходи в аптеку, будь добр. У меня градусник 38 и 5. И хлеба купи, если деньги найдутся».\n\nОна протягивает тебе мятую сотню.`;
+        return `Ты просыпаешься от того, что кто-то кашляет. Из спальни мамы.\n\nТы заходишь — мама лежит, вся красная, температура. Она шепчет:\n\n«${player.name}, ${g('сынок','дочка')}, сходи в аптеку, будь ${g('добр','добра')}. У меня градусник 38 и 5. И хлеба купи, если деньги найдутся».\n\nОна протягивает тебе мятую сотню.`;
+    },
+    onEnter: () => {
+        money(100);
     },
     choices: [
         { text: '💊 Сходить в аптеку', next: 'day4_pharmacy' },
@@ -2731,7 +3293,6 @@ day4_start: {
         { text: '🛌 Остаться дома с мамой', next: 'day4_stay_home' }
     ]
 },
-
 day4_pharmacy: {
     emoji: '💊',
     time: 'day',
@@ -2746,6 +3307,7 @@ day4_pharmacy: {
     ]
 },
 
+
 day4_pharmacy_buy: {
     emoji: '💊',
     time: 'day',
@@ -2754,7 +3316,7 @@ day4_pharmacy_buy: {
         return `Ты берёшь парацетамол за 60 рублей. Остаётся 40 — на хлеб.\n\nФармацевт суёт тебе ещё леденец: «От мамы».`;
     },
     onEnter: () => {
-        player.money -= 60;
+        money(-60);
         stat('happiness', 1);
         statMom('relationship', 2);
         dayFlags.momMedsBought = true;
@@ -2769,10 +3331,10 @@ day4_pharmacy_full: {
     time: 'day',
     title: 'Купил всё',
     text: () => {
-        return `Ты берёшь парацетамол и витаминки — ровно 100 рублей. Денег на хлеб не осталось.\n\n«Хороший ты сын… дочка», — улыбается фармацевт.`;
+        return `Ты берёшь парацетамол и витаминки — ровно 100 рублей. Денег на хлеб не осталось.\n\n«Хороший ты ${g('сын','дочь')}», — улыбается фармацевт.`;
     },
     onEnter: () => {
-        player.money -= 100;
+        money(-100);
         stat('happiness', 1);
         statMom('relationship', 3);
         dayFlags.momMedsBought = true;
@@ -2807,7 +3369,7 @@ day4_bread: {
         return `Ты заходишь в «Магнит» рядом. Берёшь хлеб за 30 рублей. Остаётся 70.\n\nНа обратном пути ты проходишь мимо аптеки. Дверь открыта.`;
     },
     onEnter: () => {
-        player.money -= 30;
+        money(-30);
     },
     choices: [
         { text: '💊 Всё-таки зайти в аптеку', next: 'day4_pharmacy' },
@@ -2929,7 +3491,7 @@ day5_start: {
     time: 'morning',
     title: 'Воскресенье',
     text: () => {
-        return `Воскресенье. Маме лучше — она уже пьёт чай на кухне.\n\nРаздаётся стук в дверь. Это Янчик.\n\n«Слышь, братан! Сегодня на Резинке собираются. Пойдём? Только держись рядом — там старшаки».`;
+        return `Воскресенье. Маме лучше — она уже пьёт чай на кухне.\n\nРаздаётся стук в дверь. Это Янчик.\n\n«Слышь, Сегодня на Резинке собираются. Пойдём? Только держись рядом — там старшаки».`;
     },
     choices: [
         { text: '🔥 Пойдём на Резинку', next: 'day5_rezinka' },
@@ -2942,7 +3504,7 @@ day5_rezinka: {
     time: 'day',
     title: 'Резинка',
     text: () => {
-        return `Вы с Янчиком идёте к парку Киселёва. За гаражами — «Резинка». Старое футбольное поле, заросшее травой, с колесом вместо ворот.\n\nНа лавке сидят пацаны постарше. Один из них — Кирилл. У него на костяшках тату.\n\n«О, малой пришёл», — усмехается он. — «А ты, я смотрю, не ссышь».`;
+                return `Вы с Янчиком идёте к парку Киселёва. За гаражами — «Резинка». Старое футбольное поле, заросшее травой, с колесом вместо ворот.\n\nНа лавке сидят пацаны постарше. Один из них — Кирилл. У него на костяшках тату. Он тут не по линии Шальных — просто пасётся, свои тёрки мутит.\n\n«О, ${g('малой','малая')} ${g('пришёл','пришла')}», — усмехается он. — «А ты, я смотрю, не ссышь».`;
     },
     choices: [
         { text: '💪 Сказать «норм» и сесть рядом', next: 'day5_sit' },
@@ -3086,7 +3648,10 @@ day5_home: {
     time: 'evening',
     title: 'Дом',
     text: () => {
-        return `Ты дома. Мама уже спит. Ты сидишь на кухне, думаешь.\n\nКирилл, пацаны, разговоры про ГАИ…\n\nТы чувствуешь, что в следующий раз ты уже не просто малой из школы.`;
+        if (dayFlags.kirillRespect || dayFlags.knowsPlan || dayFlags.smoked){
+            return `Ты дома. Мама уже спит. Ты сидишь на кухне, думаешь.\n\nКирилл, пацаны, разговоры про ГАИ…\n\nТы чувствуешь, что в следующий раз ты уже не просто ${g('малой','малая')} из школы.`;
+        }
+        return `Ты дома. Мама уже спит.\n\nТы сидишь на кухне один. День прошёл спокойно — без Резинки, без пацанов, без движа.\n\nМожет, оно и к лучшему. А может — ты что-то упустил.`;
     },
     choices: [
         { text: '😴 Спать', next: 'day5_sleep' }
@@ -3098,7 +3663,10 @@ day5_sleep: {
     time: 'night',
     title: 'Ночь',
     text: () => {
-        return `Ты ложишься. Сон не идёт. В голове крутятся разговоры с Резинки.\n\nТы засыпаешь только под утро.`;
+        if (dayFlags.kirillRespect || dayFlags.knowsPlan || dayFlags.smoked){
+            return `Ты ложишься. Сон не идёт. В голове крутятся разговоры с Резинки.\n\nТы засыпаешь только под утро.`;
+        }
+        return `Ты ложишься. Сон приходит быстро.\n\nТы не пошёл на Резинку. Может, правильно. А может — нет.`;
     },
     choices: [
         { text: '➡️ Следующий день', action: () => { nextDay(); } }
@@ -3168,7 +3736,7 @@ day6_confront: {
     time: 'day',
     title: 'К Владу',
     text: () => {
-        return `Ты подходишь к Владу: «Слышь, а не стрёмно тебе? Пацанов поставили, а ты в сторонке?»\n\nВлад оборачивается. Улыбка сползает с лица.\n\n«Ты чё, малой, берега попутал?»`;
+        return `Ты подходишь к Владу: «Слышь, а не стрёмно тебе? Пацанов поставили, а ты в сторонке?»\n\nВлад оборачивается. Улыбка сползает с лица.\n\n«Ты чё, ${g('малой','малая')}, берега ${g('попутал','попутала')}?»`;
     },
     onEnter: () => {
         statEnemy('relationship', -3);
@@ -3235,6 +3803,12 @@ day6_after_school: {
     time: 'evening',
     title: 'После школы',
     text: () => {
+        if (dayFlags.sawRealFight){
+            return `Уроки закончились. Ты идёшь домой.\n\nПеред глазами до сих пор — кровь на линолеуме и чья-то разбитая губа.\n\nТы первый раз в жизни чувствуешь злость. Настоящую. Не детскую.`;
+        }
+        if (dayFlags.stoodUpToVlad){
+            return `Уроки закончились. Ты идёшь домой.\n\nТы не отвёл взгляд. Ты стоял. И Влад отступил.\n\nВпервые за долгое время ты чувствуешь — что-то можешь.`;
+        }
         return `Уроки закончились. Ты идёшь домой.\n\nВ голове до сих пор звучит: «У богатых свои правила».\n\nТы первый раз в жизни чувствуешь злость. Настоящую. Не детскую.`;
     },
     choices: [
@@ -3303,7 +3877,7 @@ day7_kirill: {
     time: 'morning',
     title: 'Кирилл',
     text: () => {
-        return `Кирилл отходит от ворот, кивает тебе:\n\n«Слышь, малой. Есть дело. Мелкое. Отнести пакет по адресу, на ГАИ. Заберёшь бабки — 500 рублей. По-нормальному. Ты как?»\n\nОн смотрит прямо. Без улыбки.`;
+                return `Кирилл отходит от ворот, кивает тебе:\n\n«Слышь, ${g('малой','малая')}. Есть дело. Мелкое. Отнести пакет по адресу, на ГАИ. Заберёшь бабки — 500 рублей. По-нормальному. Это не Шальные. Это мои личные дела. Ты как?»\n\nОн смотрит прямо. Без улыбки.`;
     },
     choices: [
         { text: '📦 Согласиться', next: 'day7_agree' },
@@ -3333,7 +3907,7 @@ day7_agree: {
         return `Кирилл даёт тебе пакет — небольшой, заклеенный скотчем. Говорит адрес на ГАИ.\n\nТы идёшь. Сердце колотится. Что там? Может, просто документы? А может, что похуже?\n\nТы звонишь в дверь. Открывает мужик лет 40 в спортивке. Молча берёт пакет. Молча даёт пятихатку. Закрывает дверь.`;
     },
     onEnter: () => {
-        player.money += 500;
+        money(500);
         stat('happiness', 2);
         stat('charisma', 1);
         dayFlags.tookKirillDeal = true;
@@ -3348,7 +3922,7 @@ day7_return: {
     time: 'evening',
     title: 'Обратно',
     text: () => {
-        return `Ты возвращаешься. Кирилл ждёт у школы, курит.\n\n«Ну чё?» Ты киваешь. Он хлопает тебя по плечу:\n\n«Красава, малой. Не обосрался. В следующий раз будет дело серьёзнее. И бабки серьёзнее».\n\nОн уходит. У тебя в кармане 500 рублей — первые заработанные «не по-детски».`;
+        return `Ты возвращаешься. Кирилл ждёт у школы, курит.\n\n«Ну чё?» Ты киваешь. Он хлопает тебя по плечу:\n\n«Красава, ${g('малой','малая')}. Не ${g('обосрался','обосралась')}.» В следующий раз будет дело серьёзнее. И бабки серьёзнее».\n\nОн уходит. У тебя в кармане 500 рублей — первые заработанные «не по-детски».`;
     },
     choices: [
         { text: '🏠 Домой', next: 'day7_home' }
@@ -3360,7 +3934,7 @@ day7_decline: {
     time: 'evening',
     title: 'Отказался',
     text: () => {
-        return `«Не, я пас». Кирилл кивает без эмоций:\n\n«Ну и хуй с тобой. Малой ещё. Иди учись».\n\nОн уходит. Ты стоишь у ворот. Что-то внутри говорит: ты сделал правильно. Но и что-то другое — ты упустил.`;
+        return `«Не, я пас». Кирилл кивает без эмоций:\n\n««Ну и хуй с тобой. ${g('Малой','Малая')} ещё.» Иди учись».\n\nОн уходит. Ты стоишь у ворот. Что-то внутри говорит: ты сделал правильно. Но и что-то другое — ты упустил.`;
     },
     onEnter: () => {
         stat('happiness', 1);
@@ -3376,7 +3950,16 @@ day7_school: {
     time: 'day',
     title: 'Школа',
     text: () => {
-        return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nТы отвлекаешься. В голове — Кирилл, пакет, 500 рублей. Или — отказ.\n\nЧто дальше?`;
+        if (dayFlags.missedKirill){
+            return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nТы отвлекаешься. В голове — утренняя встреча. Кирилл ждал тебя. Зачем? Ты не узнал.\n\nЧто дальше?`;
+        }
+        if (dayFlags.declinedKirill){
+            return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nТы отвлекаешься. В голове — Кирилл, пакет, 500 рублей. Ты отказался. Но что-то грызёт изнутри.\n\nЧто дальше?`;
+        }
+        if (dayFlags.tookKirillDeal){
+            return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nТы отвлекаешься. В голове — Кирилл, пакет, 500 рублей. Ты взял. И не уверен, правильно ли.\n\nЧто дальше?`;
+        }
+        return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nЧто дальше?`;
     },
     choices: [
         { text: '🏫 После школы', next: 'day7_after_school' }
@@ -3402,10 +3985,15 @@ day7_home: {
     text: () => {
         return `Ты заходишь домой. Мама на кухне, что-то готовит.\n\nОна оборачивается: «Как день прошёл?»\n\nТы не знаешь, что сказать. Слишком много всего.`;
     },
-    choices: [
-        { text: '💬 Рассказать про Кирилла и пакет', next: 'day7_tell_mom' },
+    choices: () => {
+    const list = [
         { text: '😐 Сказать «норм» и уйти в комнату', next: 'day7_hide_mom' }
-    ]
+    ];
+    if (!dayFlags.missedKirill){
+        list.unshift({ text: '💬 Рассказать про Кирилла', next: 'day7_tell_mom' });
+    }
+    return list;
+    }
 },
 
 day7_tell_mom: {
@@ -3413,7 +4001,13 @@ day7_tell_mom: {
     time: 'evening',
     title: 'Разговор с мамой',
     text: () => {
-        return `Ты рассказываешь. Про Кирилла, про пакет, про 500 рублей.\n\nМама бледнеет. Кладёт ложку. Садится напротив.\n\n«${player.name}. Послушай меня внимательно. Я всю жизнь работаю на заводе за копейки. И знаешь что? Лучше так, чем через чужое. Эти люди — они не друзья. Они используют. Сегодня пакет, завтра — срок. Понимаешь?»\n\nОна смотрит тебе в глаза.`;
+        if (dayFlags.tookKirillDeal){
+            return `Ты рассказываешь. Про Кирилла, про пакет, про 500 рублей.\n\nМама бледнеет. Кладёт ложку. Садится напротив.\n\n«${player.name}, послушай меня внимательно. Я всю жизнь работаю на заводе за копейки. И знаешь что? Лучше так, чем через чужое. Эти люди — они не друзья. Они используют. Сегодня пакет, завтра — срок. Понимаешь?»\n\nОна смотрит тебе в глаза.`;
+        }
+        if (dayFlags.declinedKirill){
+            return `Ты рассказываешь. Про Кирилла — как он ждал у школы, как предлагал «дело». Как ты отказался.\n\nМама слушает молча. Потом кивает:\n\n«Правильно. Я всю жизнь работаю на заводе за копейки. И знаешь что? Лучше так, чем через чужое. Эти люди — они не друзья. Они используют. Ты сделал правильно, что отказался».\n\nОна смотрит тебе в глаза.`;
+        }
+        return `Ты рассказываешь про день. Про школу, про пацанов. Про то, что чувствуешь — что-то меняется.\n\nМама слушает молча. Потом говорит:\n\n«Я всю жизнь работаю на заводе за копейки. И знаешь что? Лучше так, чем через чужое. Не лезь туда, где тебе не место. Понимаешь?»\n\nОна смотрит тебе в глаза.`;
     },
     onEnter: () => {
         statMom('relationship', 2);
@@ -3449,7 +4043,16 @@ day7_hide_mom: {
     time: 'evening',
     title: 'В комнату',
     text: () => {
-        return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nВ кармане — 500 рублей (если взял) или пустота (если отказался).\n\nТы смотришь в потолок. Первая неделя школы закончилась. А кажется — прошла целая жизнь.`;
+        if (dayFlags.tookKirillDeal){
+            return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nВ кармане — 500 рублей. Первые заработанные «не по-детски».\n\nТы смотришь в потолок. Первая неделя школы закончилась. А кажется — прошла целая жизнь.`;
+        }
+        if (dayFlags.declinedKirill){
+            return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nВ кармане пусто. Ты отказался — и правильно. Но что-то грызёт изнутри.\n\nТы смотришь в потолок. Первая неделя школы закончилась.`;
+        }
+        if (dayFlags.missedKirill){
+            return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nТы прошёл мимо Кирилла. Не подошёл. Что он хотел — ты уже не узнаешь.\n\nТы смотришь в потолок. Первая неделя школы закончилась.`;
+        }
+        return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nТы смотришь в потолок. Первая неделя школы закончилась. А кажется — прошла целая жизнь.`;
     },
     onEnter: () => {
         stat('happiness', -1);
@@ -3469,6 +4072,8 @@ day7_sleep: {
             line = 'Ты взял первые «взрослые» деньги. И уже не уверен, что сможешь остановиться.';
         } else if (dayFlags.declinedKirill) {
             line = 'Ты отказался. Пока. Но Кирилл запомнил тебя — и это не конец.';
+        } else if (dayFlags.missedKirill) {
+            line = 'Ты прошёл мимо. Что было бы, если бы подошёл — уже не узнать.';
         } else {
             line = 'Ты так и не понял, что это было. Но что-то внутри изменилось.';
         }
@@ -3476,11 +4081,28 @@ day7_sleep: {
         return `Ты ложишься спать. За окном темно. Звёзды горят.\n\n${line}\n\nТебе 10 лет. Впереди — целая жизнь.\n\nПервый акт окончен.`;
     },
     choices: [
-        { text: '➡️ Дальше (11 лет)', action: () => { nextAct(); } }
+        { text: '➡️ Дальше', action: () => { nextAct(); } }
     ]
-}
+},
 
-};  // конец storyNodes
+/* ============================================================
+   ПЕРЕХОД · АКТ 2 (11 лет)
+   ============================================================ */
+act_transition: {
+    emoji: '⏳',
+    time: 'night',
+    title: 'Год прошёл',
+    text: () => {
+        return `Первая неделя школы осталась позади.\n\nОсень перешла в зиму. Зима — в весну. Весна — в лето.\n\nТы вырос. Тебе уже 11. Многое изменилось. Кто-то ушёл, кто-то появился. Но район — тот же. И правила — те же.\n\nВпереди — новый учебный год. И новые проблемы.`;
+    },
+    choices: [
+        { text: '➡️ Начать 11 лет', action: () => {
+            showScene('main');
+        }}
+    ]
+},
+
+}; // конец storyNodes
 
 
 
