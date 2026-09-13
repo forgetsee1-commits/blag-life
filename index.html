@@ -1012,9 +1012,9 @@ body.time-evening .stars-bg {
         rgba(168, 200, 220, 0.7) 60%,
         rgba(120, 160, 190, 0.9) 100%);
     border-radius: 50% 50% 30% 30%;
-    filter: blur(0.5px);
     animation: rainFall linear infinite;
-    box-shadow: 0 0 4px rgba(168, 200, 220, 0.4);
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 @keyframes rainFall {
@@ -1034,22 +1034,17 @@ body.time-evening .stars-bg {
     }
 }
 
-/* Крупные медленные капли */
 .raindrop.big {
     width: 3px;
     height: 100px;
     animation-duration: 1.8s;
-    filter: blur(1px);
-    box-shadow: 0 0 6px rgba(168, 200, 220, 0.6);
 }
 
-/* Мелкая морось — точки */
 .raindrop.small {
     width: 1px;
     height: 40px;
     animation-duration: 1s;
     opacity: 0.5;
-    filter: blur(0.3px);
 }
 
 /* Разводы на «стекле» — сверху */
@@ -1723,15 +1718,20 @@ function showScene(id){
         }
     }
 
-        // ===== ДОЖДЬ =====
+         // ===== ДОЖДЬ =====
     const rainBg = document.getElementById('rainBg');
     if (rainBg){
         const decorList = (node.decor || '').split(',').map(s => s.trim());
         if (decorList.includes('rain')){
-            generateRaindrops();
-            setTimeout(() => rainBg.classList.add('active'), 100);
+            // Генерируем только если ещё не готов
+            if (rainBg.dataset.ready !== '1'){
+                generateRaindrops();
+            }
+            rainBg.classList.add('active');
         } else {
             rainBg.classList.remove('active');
+            // Сбрасываем готовность — если снова понадобится, пересоздадим
+            rainBg.dataset.ready = '0';
         }
     }
 
@@ -1915,35 +1915,38 @@ function renderRainDecor(){
 function generateRaindrops(){
     const bg = document.getElementById('rainBg');
     if (!bg) return;
+
+    // Если дождь уже сгенерирован — не пересоздаём
+    if (bg.dataset.ready === '1') return;
     bg.innerHTML = '';
 
-    // 60 крупных капель
-    for (let i = 0; i < 60; i++){
+    // 20 крупных капель
+    for (let i = 0; i < 20; i++){
         const drop = document.createElement('div');
         drop.className = 'raindrop';
         drop.style.left = Math.random() * 100 + '%';
-        drop.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
-        drop.style.animationDelay = Math.random() * 2 + 's';
+        drop.style.animationDuration = (0.7 + Math.random() * 0.5) + 's';
+        drop.style.animationDelay = (Math.random() * 1.5) + 's';
         bg.appendChild(drop);
     }
 
-    // 30 крупных (медленных)
-    for (let i = 0; i < 30; i++){
+    // 12 крупных (медленных)
+    for (let i = 0; i < 12; i++){
         const drop = document.createElement('div');
         drop.className = 'raindrop big';
         drop.style.left = Math.random() * 100 + '%';
-        drop.style.animationDuration = (1.4 + Math.random() * 1) + 's';
-        drop.style.animationDelay = Math.random() * 3 + 's';
+        drop.style.animationDuration = (1.4 + Math.random() * 0.8) + 's';
+        drop.style.animationDelay = (Math.random() * 2) + 's';
         bg.appendChild(drop);
     }
 
-    // 40 мелких (морось)
-    for (let i = 0; i < 40; i++){
+    // 20 мелких (морось)
+    for (let i = 0; i < 20; i++){
         const drop = document.createElement('div');
         drop.className = 'raindrop small';
         drop.style.left = Math.random() * 100 + '%';
-        drop.style.animationDuration = (0.8 + Math.random() * 0.4) + 's';
-        drop.style.animationDelay = Math.random() * 2 + 's';
+        drop.style.animationDuration = (0.9 + Math.random() * 0.4) + 's';
+        drop.style.animationDelay = (Math.random() * 1.5) + 's';
         bg.appendChild(drop);
     }
 
@@ -1955,6 +1958,9 @@ function generateRaindrops(){
     const fog = document.createElement('div');
     fog.className = 'rain-fog';
     bg.appendChild(fog);
+
+    // Помечаем — уже готово
+    bg.dataset.ready = '1';
 }
 function generateDiscoLights(){
     const bg = document.getElementById('discoBg');
