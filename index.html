@@ -2011,25 +2011,32 @@ const TRACK_URL = 'https://script.google.com/macros/s/AKfycbzxM3OgUOa0u06BmK5iAq
 
 function track(event, data){
     data = data || {};
-    if (!window.TELEGRAM_USER_ID) return;
+    if (!window.TELEGRAM_USER_ID) {
+        console.log('track: нет USER_ID');
+        return;
+    }
 
-    try {
-        fetch(TRACK_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                event: event,
-                userId: String(window.TELEGRAM_USER_ID),
-                name: (typeof player !== 'undefined' && player.name) || '',
-                gender: (typeof player !== 'undefined' && player.gender) || '',
-                age: (typeof player !== 'undefined' && player.age) || '',
-                day: (typeof player !== 'undefined' && player.day) || '',
-                scene: (typeof currentScene !== 'undefined' && currentScene) || '',
-                choice: data.choice || ''
-            })
-        });
-    } catch(e){}
+    console.log('track отправляет:', event);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', TRACK_URL, true);
+    xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+    xhr.onload = function(){
+        console.log('track OK:', xhr.responseText);
+    };
+    xhr.onerror = function(){
+        console.error('track ошибка — сеть или CORS');
+    };
+    xhr.send(JSON.stringify({
+        event: event,
+        userId: String(window.TELEGRAM_USER_ID),
+        name: 'test',
+        gender: '',
+        age: '',
+        day: '',
+        scene: '',
+        choice: ''
+    }));
 }
 
 function doChoice(sceneId, index){
