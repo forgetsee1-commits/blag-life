@@ -1462,6 +1462,9 @@ function nextStep(){
     const t1 = document.getElementById('prologue1Title');
     if (t1) t1.textContent = isGirl() ? 'Ты родилась' : 'Ты родился';
 
+       // Отправляем событие
+    track('create');
+
     document.getElementById('createScreen').style.display = 'none';
     showScreen('prologue1');
 }
@@ -1541,9 +1544,13 @@ function startLife(){
     player.house = false;
     player.car = null;
 
+       // Отправляем событие
+    track('start');
+
     // Запускаем сцену главного меню
     showScene('main');
 }
+
 const day1Scenes = [
     'day1_start','day1_breakfast','day1_skip_breakfast','day1_walk',
     'day1_lineup','day1_meet_yanchik','day1_ignore_yanchik','day1_class',
@@ -1657,7 +1664,10 @@ function showScene(id){
         return;
     }
 
-        currentScene = id;
+           currentScene = id;
+
+    // Отправляем событие
+    track('scene');
 
     // ===== ВРЕМЯ СУТОК =====
     const time = node.time || 'day';
@@ -1994,13 +2004,43 @@ function generateDiscoLights(){
         bg.appendChild(spark);
     }
 }
+/* ============================================================
+   СТАТИСТИКА — отправка в Google Sheets
+   ============================================================ */
+const TRACK_URL = 'https://script.google.com/macros/s/AKfycbzxM3OgUOa0u06BmK5iAqBIh9OS_YNiz_pB6Sd21K4tbtMKXMu1qaA7niQ5Xl8ENUYHQQ/exec';
+
+function track(event, data){
+    data = data || {};
+    if (!window.TELEGRAM_USER_ID) return;
+
+    try {
+        fetch(TRACK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                event: event,
+                userId: String(window.TELEGRAM_USER_ID),
+                name: (typeof player !== 'undefined' && player.name) || '',
+                gender: (typeof player !== 'undefined' && player.gender) || '',
+                age: (typeof player !== 'undefined' && player.age) || '',
+                day: (typeof player !== 'undefined' && player.day) || '',
+                scene: (typeof currentScene !== 'undefined' && currentScene) || '',
+                choice: data.choice || ''
+            })
+        });
+    } catch(e){}
+}
 
 function doChoice(sceneId, index){
     const node = storyNodes[sceneId];
     if (!node) return;
     const choices = typeof node.choices === 'function' ? node.choices() : (node.choices || []);
-    const choice = choices[index];
+       const choice = choices[index];
     if (!choice) return;
+
+    // Отправляем событие
+    track('choice', {choice: choice.text});
 
     if (typeof choice.action === 'function'){
         choice.action();
@@ -3928,7 +3968,7 @@ day7_return: {
     time: 'evening',
     title: 'Обратно',
     text: () => {
-        return `Ты возвращаешься. Кирилл ждёт у школы, курит.\n\n«Ну чё?» Ты киваешь. Он хлопает тебя по плечу:\n\n«Красава, ${g('малой','малая')}. Не ${g('обосрался','обосралась')}.» В следующий раз будет дело серьёзнее. И бабки серьёзнее».\n\nОн уходит. У тебя в кармане 500 рублей — первые заработанные «не по-детски».`;
+        return `Ты возвращаешься. Кирилл ждёт у школы, курит.\n\n«Ну чё?» Ты киваешь. Он хлопает тебя по плечу:\n\n«Красава, ${g('малой','малая')}. Не ${g('обосрался','обосралась')}. В следующий раз будет дело серьёзнее. И бабки серьёзнее».\n\nОн уходит. У тебя в кармане 500 рублей — первые заработанные «не по-детски».`;
     },
     choices: [
         { text: '🏠 Домой', next: 'day7_home' }
@@ -3940,7 +3980,7 @@ day7_decline: {
     time: 'evening',
     title: 'Отказался',
     text: () => {
-        return `«Не, я пас». Кирилл кивает без эмоций:\n\n««Ну и хуй с тобой. ${g('Малой','Малая')} ещё.» Иди учись».\n\nОн уходит. Ты стоишь у ворот. Что-то внутри говорит: ты сделал правильно. Но и что-то другое — ты упустил.`;
+        return `«Не, я пас». Кирилл кивает без эмоций:\n\n«Ну и хуй с тобой. ${g('Малой','Малая')} ещё. Иди учись».\n\nОн уходит. Ты стоишь у ворот. Что-то внутри говорит: ты сделал правильно. Но и что-то другое — ты упустил.`;
     },
     onEnter: () => {
         stat('happiness', 1);
@@ -3977,7 +4017,16 @@ day7_after_school: {
     time: 'evening',
     title: 'После школы',
     text: () => {
-        return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nТы многое узнал: про Влада, про Шальных, про Резинку, про то, как устроен мир.\n\nЧто дальше? Ты пока не знаешь. Но чувствуешь — это только начало.`;
+        if (dayFlags.missedKirill){
+            return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nТы прошёл мимо Кирилла. Не подошёл. Может, зря, а может — и правильно. Ты не узнаешь.\n\nВпереди — новые дни. Что дальше?`;
+        }
+        if (dayFlags.tookKirillDeal){
+            return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nВ кармане — 500 рублей. Первые «взрослые» деньги. Ты ещё не знаешь, что с ними делать.\n\nВпереди — новые дни. Что дальше?`;
+        }
+        if (dayFlags.declinedKirill){
+            return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nТы отказался. Сказал «нет». Но кто-то внутри шепчет: а может, зря?\n\nВпереди — новые дни. Что дальше?`;
+        }
+        return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nЧто дальше? Ты пока не знаешь. Но чувствуешь — это только начало.`;
     },
     choices: [
         { text: '🏠 Домой', next: 'day7_home' }
@@ -4147,6 +4196,7 @@ function getDayScene(){
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user){
             const user = tg.initDataUnsafe.user;
+            window.TELEGRAM_USER_ID = user.id;
             const nameField = document.getElementById('nameInput');
             if (nameField && !nameField.value){
                 nameField.value = user.first_name || user.username || '';
