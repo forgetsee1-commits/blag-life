@@ -99,38 +99,41 @@
 <div class="splash-screen" id="splashScreen">
     <div class="splash-inner">
 
-        <!-- Небо с самолётом -->
-        <svg class="splash-sky" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <!-- Ретро-пиксельные квадраты по краям -->
+        <div class="splash-squares">
+            <span class="splash-square sq-1"></span>
+            <span class="splash-square sq-2"></span>
+            <span class="splash-square sq-3"></span>
+            <span class="splash-square sq-4"></span>
+            <span class="splash-square sq-5"></span>
+            <span class="splash-square sq-6"></span>
+            <span class="splash-square sq-7"></span>
+            <span class="splash-square sq-8"></span>
+        </div>
 
-            <!-- Инверсионный след (растёт за самолётом) -->
-            <path class="splash-trail"
-                  d="M -20 120 Q 60 60, 140 90 Q 200 115, 240 130"
-                  fill="none"
-                  stroke="#f5ecd9"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  opacity="0.85"/>
+        <!-- Небо с самолётом и сердечком -->
+        <svg class="splash-sky" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
 
-            <!-- Сердечко, которое рисует самолёт -->
-            <path class="splash-heart"
-                  d="M 200 180
-                     C 200 165, 175 150, 155 165
-                     C 135 180, 135 205, 155 225
-                     L 200 260
-                     L 245 225
-                     C 265 205, 265 180, 245 165
-                     C 225 150, 200 165, 200 180 Z"
+            <!-- Путь сердечка (по нему летит самолёт) -->
+            <path id="heartPath"
+                  class="splash-heart"
+                  d="M 200 100
+                     C 200 70, 160 50, 130 70
+                     C 100 90, 100 130, 130 160
+                     L 200 230
+                     L 270 160
+                     C 300 130, 300 90, 270 70
+                     C 240 50, 200 70, 200 100 Z"
                   fill="none"
                   stroke="#d97a6c"
-                  stroke-width="3.5"
+                  stroke-width="4"
                   stroke-linecap="round"
                   stroke-linejoin="round"/>
 
-            <!-- Самолётик -->
-            <g class="splash-plane">
-                <path d="M 0 0 L 26 8 L 0 16 L 6 8 Z" fill="#2a1f18"/>
-                <path d="M 6 8 L 26 8 L 6 8 Z" fill="#2a1f18"/>
-                <circle cx="7" cy="8" r="1.2" fill="#d97a6c"/>
+            <!-- Самолётик — летит по контуру сердечка -->
+            <g class="splash-plane" id="splashPlane">
+                <path d="M -14 -5 L 14 0 L -14 5 L -6 0 Z" fill="#2a1f18"/>
+                <circle cx="-2" cy="0" r="1.4" fill="#d97a6c"/>
             </g>
         </svg>
 
