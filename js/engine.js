@@ -1,3 +1,5 @@
+'use strict';
+
 /* ============================================================
    ИГРОВОЕ СОСТОЯНИЕ
    ============================================================ */
@@ -5,6 +7,14 @@ let player = {};
 let storyFlags = {};
 let dayFlags = {};
 let currentScene = null;
+
+/* Флаг перехода между сценами — защита от гонок таймеров */
+let isTransitioning = false;
+
+/* storyNodes наполняется в main.js — объявляем здесь,
+   чтобы не было TDZ при обращении из showScene.
+   Именно var — чтобы typeof вернул 'undefined', а не упал. */
+var storyNodes = {};
 
 /* ============================================================
    СПИСКИ СЦЕН ДЛЯ ДЕКОРА
@@ -31,6 +41,11 @@ const day3Scenes = [
     'day3_decline_disco','day3_ask_disco','day3_disco_go','day3_disco_mix',
     'day3_disco_watch','day3_disco_shy','day3_disco_scene','day3_disco_end','day3_home'
 ];
+
+/* Быстрый поиск по сетам — вместо includes() на массивах */
+const day1Set = new Set(day1Scenes);
+const day2Set = new Set(day2Scenes);
+const day3Set = new Set(day3Scenes);
 
 /* ============================================================
    FAB — плавающее меню
@@ -173,11 +188,56 @@ function startLife(){
     player.house = false;
     player.car = null;
 
-       // Устанавливаем время по умолчанию
+    // Сброс сюжетных флагов при новой игре
+    storyFlags = {};
+    dayFlags = {};
+
+    // Время по умолчанию
     document.body.dataset.time = 'day';
+
+    // Сброс декоративных слоёв на всякий случай
+    resetDecorLayers();
 
     // Запускаем сцену главного меню
     showScene('main');
+}
+
+/* ============================================================
+   ПРОДОЛЖИТЬ СОХРАНЁННУЮ ИГРУ
+   ============================================================ */
+function continueGame(){
+    if (!loadGame()) {
+        showToast('⚠️','Ошибка','Сохранение не найдено или повреждено.');
+        return;
+    }
+
+    // Проверяем, что критичные поля на месте
+    if (!player.alive){
+        showToast('⚠️','Ошибка','Сохранение не содержит активной игры.');
+        return;
+    }
+
+    showScreen('lifeScreen');
+    updateResourceBar();
+
+    // Восстанавливаем время суток
+    if (!document.body.dataset.time) document.body.dataset.time = 'day';
+
+    // Возвращаемся в текущую сцену или main
+    const targetScene = currentScene && storyNodes[currentScene] ? currentScene : 'main';
+    showScene(targetScene);
+}
+
+/* ============================================================
+   СБРОС ДЕКОРА (для нового старта / смены акта)
+   ============================================================ */
+function resetDecorLayers(){
+    ['rainBg','discoBg','fogBg','lampsBg','fgDecor'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('active');
+        if (el.dataset) el.dataset.ready = '0';
+    });
 }
 
 /* ============================================================
@@ -286,9 +346,14 @@ const GENDER_DICT = [
     ['красава', 'красотка'],
     ['дурак', 'дура'],
     ['лох', 'лохушка'],
-    ['трус', 'трусиха'],
-    ['умница', 'умница']
+    ['трус', 'трусиха']
 ];
+
+/* Предсортированный словарь — считаем один раз */
+const GENDER_DICT_SORTED = [...GENDER_DICT].sort((a, b) => b[0].length - a[0].length);
+
+/* Регекс для проверки границ */
+const LETTER_RE = /[а-яА-ЯёЁa-zA-Z]/;
 
 /* ============================================================
    GENDERFIX — УМНАЯ АВТОЗАМЕНА
@@ -299,10 +364,7 @@ function genderFix(text){
 
     let result = text;
 
-    // Сортируем по длине — длинные фразы первыми
-    const sorted = [...GENDER_DICT].sort((a, b) => b[0].length - a[0].length);
-
-    for (const [male, female] of sorted){
+    for (const [male, female] of GENDER_DICT_SORTED){
         let pos = 0;
         let out = '';
         while (pos < result.length){
@@ -313,45 +375,8 @@ function genderFix(text){
             }
             const before = idx > 0 ? result[idx - 1] : '';
             const after = idx + male.length < result.length ? result[idx + male.length] : '';
-            const isLetterBefore = /[а-яА-ЯёЁa-zA-Z]/.test(before);
-            const isLetterAfter = /[а-яА-ЯёЁa-zA-Z]/.test(after);
-
-            if (!isLetterBefore && !isLetterAfter){
-                out += result.slice(pos, idx) + female;
-                pos = idx + male.length;
-            } else {
-                out += result.slice(pos, idx + male.length);
-                pos = idx + male.length;
-            }
-        }
-        result = out;
-    }
-
-    return result;
-}
-
-/* ============================================================
-   ЗАМЕНА В ТЕКСТЕ (без кавычек)
-   ============================================================ */
-function replaceInText(text){
-    let result = text;
-
-    // Сортируем словарь по длине — длинные фразы первыми
-    const sorted = [...GENDER_DICT].sort((a, b) => b[0].length - a[0].length);
-
-    for (const [male, female] of sorted){
-        let pos = 0;
-        let out = '';
-        while (pos < result.length){
-            const idx = result.indexOf(male, pos);
-            if (idx === -1){
-                out += result.slice(pos);
-                break;
-            }
-            const before = idx > 0 ? result[idx - 1] : '';
-            const after = idx + male.length < result.length ? result[idx + male.length] : '';
-            const isLetterBefore = /[а-яА-ЯёЁa-zA-Z]/.test(before);
-            const isLetterAfter = /[а-яА-ЯёЁa-zA-Z]/.test(after);
+            const isLetterBefore = LETTER_RE.test(before);
+            const isLetterAfter = LETTER_RE.test(after);
 
             if (!isLetterBefore && !isLetterAfter){
                 out += result.slice(pos, idx) + female;
@@ -373,10 +398,18 @@ function replaceInText(text){
 function showScene(id){
     if (!player.alive) return;
 
+    // Служебные экраны
     if (id === 'stats'){ renderStatsScreen(); return; }
     if (id === 'achievements'){ renderAchievementsScreen(); return; }
     if (id === 'summary'){ renderSummaryScreen(); return; }
 
+    // Защита от бесконечной рекурсии
+    if (typeof storyNodes === 'undefined' || !storyNodes){
+        console.error('storyNodes не определён. Проверь порядок загрузки скриптов.');
+        return;
+    }
+
+    // Гендерная развилка сцены
     if (storyNodes[id] && storyNodes[id].sceneGender){
         const variants = storyNodes[id].sceneGender;
         const chosen = isGirl() ? variants.female : variants.male;
@@ -388,7 +421,9 @@ function showScene(id){
     const node = storyNodes[id];
     if (!node){
         console.warn('Нет узла:', id);
-        showScene('main');
+        if (id !== 'main' && storyNodes['main']){
+            showScene('main');
+        }
         return;
     }
 
@@ -398,31 +433,31 @@ function showScene(id){
     const time = node.time || 'day';
     const currentTime = document.body.dataset.time || 'day';
 
-    // Если время изменилось — плавный переход через оверлей
     if (time !== currentTime){
+        if (isTransitioning) return;
+        isTransitioning = true;
+
         const overlay = document.getElementById('transitionOverlay');
 
         if (overlay){
-            // 1. Оверлей проявляется (0.5 сек)
             overlay.classList.add('active');
 
             setTimeout(() => {
-                // 2. Меняем фон
                 document.body.dataset.time = time;
 
                 setTimeout(() => {
-                    // 3. Оверлей исчезает (0.5 сек)
                     overlay.classList.remove('active');
 
                     setTimeout(() => {
-                        // 4. Показываем сцену
                         renderSceneContent(node, id);
+                        isTransitioning = false;
                     }, 300);
                 }, 200);
             }, 500);
         } else {
             document.body.dataset.time = time;
             renderSceneContent(node, id);
+            isTransitioning = false;
         }
     } else {
         renderSceneContent(node, id);
@@ -438,6 +473,7 @@ function renderSceneContent(node, id){
     updateResourceBar();
 
     const box = document.getElementById('sceneBox');
+    if (!box) return;
     box.className = 'scene-box';
 
     const choices = typeof node.choices === 'function' ? node.choices() : (node.choices || []);
@@ -461,7 +497,7 @@ function renderSceneContent(node, id){
 
     // ДЕКОР СЦЕНЫ
     let decorHTML = '';
-    if (typeof day1Scenes !== 'undefined' && day1Scenes.includes(id)) {
+    if (day1Set.has(id)) {
         decorHTML += renderCatDecor();
     }
     if (node.decor === 'cat') {
@@ -471,12 +507,14 @@ function renderSceneContent(node, id){
         decorHTML += renderBloodDecor();
     }
 
+    // Разбираем node.decor один раз
+    const decorList = (node.decor || '').split(',').map(s => s.trim()).filter(Boolean);
+
     // Фоновый декор: листья
     const fg = document.getElementById('fgDecor');
     if (fg){
         fg.classList.remove('active');
-        if (typeof day1Scenes !== 'undefined' &&
-            (day1Scenes.includes(id) || day2Scenes.includes(id) || day3Scenes.includes(id))){
+        if (day1Set.has(id) || day2Set.has(id) || day3Set.has(id)){
             setTimeout(() => fg.classList.add('active'), 100);
         }
     }
@@ -484,7 +522,6 @@ function renderSceneContent(node, id){
     // ДОЖДЬ
     const rainBg = document.getElementById('rainBg');
     if (rainBg){
-        const decorList = (node.decor || '').split(',').map(s => s.trim());
         if (decorList.includes('rain')){
             if (rainBg.dataset.ready !== '1'){
                 generateRaindrops();
@@ -499,7 +536,6 @@ function renderSceneContent(node, id){
     // ДИСКОТЕКА
     const discoBg = document.getElementById('discoBg');
     if (discoBg){
-        const decorList = (node.decor || '').split(',').map(s => s.trim());
         if (decorList.includes('disco')){
             generateDiscoLights();
             setTimeout(() => discoBg.classList.add('active'), 100);
@@ -511,7 +547,6 @@ function renderSceneContent(node, id){
     // ТУМАН
     const fogBg = document.getElementById('fogBg');
     if (fogBg){
-        const decorList = (node.decor || '').split(',').map(s => s.trim());
         if (decorList.includes('fog')){
             if (fogBg.dataset.ready !== '1'){
                 generateFog();
@@ -526,7 +561,6 @@ function renderSceneContent(node, id){
     // ФОНАРИ
     const lampsBg = document.getElementById('lampsBg');
     if (lampsBg){
-        const decorList = (node.decor || '').split(',').map(s => s.trim());
         if (decorList.includes('lamps')){
             if (lampsBg.dataset.ready !== '1'){
                 generateLamps();
@@ -546,7 +580,7 @@ function renderSceneContent(node, id){
         ${choicesHTML}
     `;
 
-       // Плавное появление
+    // Плавное появление
     box.classList.remove('fade-out');
     box.style.animation = 'none';
     void box.offsetWidth;
@@ -575,7 +609,7 @@ function updateResourceBar(){
     const m = document.getElementById('resMoney');
     const d = document.getElementById('resDay');
     const a = document.getElementById('resAge');
-    if (m) m.textContent = player.money + '₽';
+    if (m) m.textContent = (player.money || 0) + '₽';
     if (d) d.textContent = player.day || 1;
     if (a) a.textContent = player.age || 10;
 }
@@ -608,13 +642,16 @@ function closeToast(){
 
 /* ============================================================
    СТАТЫ / АЧИВКИ / ИТОГИ
+   ВАЖНО: имя игрока НЕ проходит через genderFix
    ============================================================ */
 function renderStatsScreen(){
     const s = player.stats || {};
     const mom = player.mom || {};
     const enemy = player.enemy || {};
 
-    const text = genderFix(`
+    updateResourceBar();
+
+    const rawText = `
 👤 ${player.name} ${player.gender || ''}
 🎂 Возраст: ${player.age}
 📅 День: ${player.day}
@@ -628,13 +665,13 @@ function renderStatsScreen(){
 
 👩 Мама — отношение: ${mom.relationship || 0} / 20
 👿 Влад — вражда: ${Math.abs(enemy.relationship || 0)} / 20
-    `.trim());
+    `.trim();
 
     const box = document.getElementById('sceneBox');
     box.innerHTML = `
         <div class="scene-emoji">📊</div>
         <div class="scene-title">Статистика</div>
-        <div class="scene-text" style="text-align:left; white-space:pre-line; font-family:monospace; font-size:14px;">${text}</div>
+        <div class="scene-text scene-text-stats">${rawText}</div>
         <button class="choice-btn back" onclick="showScene('main')">← Назад</button>
     `;
 }
@@ -647,41 +684,40 @@ function renderAchievementsScreen(){
     if (player.friends >= 5) a.push('🤝 Душа компании');
     if (player.storyDone && Object.keys(player.storyDone).length >= 3) a.push('📖 Первые главы');
 
-    const text = genderFix(a.length ? a.join('\n') : 'Пока пусто. Живи — появятся.');
+    const text = a.length ? a.join('\n') : 'Пока пусто. Живи — появятся.';
 
     const box = document.getElementById('sceneBox');
     box.innerHTML = `
         <div class="scene-emoji">🏆</div>
         <div class="scene-title">Достижения</div>
-        <div class="scene-text" style="text-align:left; white-space:pre-line;">${text}</div>
+        <div class="scene-text scene-text-stats">${text}</div>
         <button class="choice-btn back" onclick="showScene('main')">← Назад</button>
     `;
 }
 
 function renderSummaryScreen(){
-    let text = `👤 ${player.name}\n`;
-    text += `🎂 Возраст: ${player.age}\n`;
-    text += `📅 День: ${player.day}\n`;
-    text += `💰 Денег: ${player.money}₽\n\n`;
-    if (player.mom) text += `👩 Мама: отношение ${player.mom.relationship}/20\n`;
-    if (player.mentor) text += `🎓 Наставник: ${player.mentor.name}\n`;
-    if (player.brother) text += `🧑 Брат: ${player.brother.name}\n`;
-    text = genderFix(text);
+    let rawText = `👤 ${player.name}\n`;
+    rawText += `🎂 Возраст: ${player.age}\n`;
+    rawText += `📅 День: ${player.day}\n`;
+    rawText += `💰 Денег: ${player.money}₽\n\n`;
+    if (player.mom) rawText += `👩 Мама: отношение ${player.mom.relationship}/20\n`;
+    if (player.mentor) rawText += `🎓 Наставник: ${player.mentor.name}\n`;
+    if (player.brother) rawText += `🧑 Брат: ${player.brother.name}\n`;
 
     const box = document.getElementById('sceneBox');
     box.innerHTML = `
         <div class="scene-emoji">📈</div>
         <div class="scene-title">Итоги</div>
-        <div class="scene-text" style="text-align:left; white-space:pre-line;">${text}</div>
+        <div class="scene-text scene-text-stats">${rawText}</div>
         <button class="choice-btn back" onclick="showScene('main')">← Назад</button>
     `;
 }
 
 /* ============================================================
-   СОХРАНЕНИЕ
+   СОХРАНЕНИЕ / ЗАГРУЗКА
    ============================================================ */
 function saveGame(){
-    const data = { player, storyFlags, dayFlags };
+    const data = { player, storyFlags, dayFlags, currentScene };
     try {
         localStorage.setItem('blag_save', JSON.stringify(data));
         showToast('💾','Сохранено','Игра сохранена.');
@@ -690,9 +726,37 @@ function saveGame(){
     }
 }
 
+function loadGame(){
+    try {
+        const raw = localStorage.getItem('blag_save');
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        if (data.player) player = data.player;
+        if (data.storyFlags) storyFlags = data.storyFlags;
+        if (data.dayFlags) dayFlags = data.dayFlags;
+        if (data.currentScene) currentScene = data.currentScene;
+        return true;
+    } catch(e){
+        console.warn('Не удалось загрузить сейв:', e);
+        return false;
+    }
+}
+
+function hasSave(){
+    try {
+        const raw = localStorage.getItem('blag_save');
+        if (!raw) return false;
+        // Проверяем, что это валидный JSON с player
+        const data = JSON.parse(raw);
+        return !!(data && data.player && data.player.alive);
+    } catch(e){
+        return false;
+    }
+}
+
 function resetGame(){
     if (!confirm('Начать заново? Прогресс потеряется.')) return;
-    localStorage.removeItem('blag_save');
+    try { localStorage.removeItem('blag_save'); } catch(e){}
     location.reload();
 }
 
@@ -700,19 +764,21 @@ function resetGame(){
    СТАТЫ — быстрое изменение
    ============================================================ */
 function money(delta){
-    if (!player.money) player.money = 0;
+    if (player.money === undefined) player.money = 0;
     player.money += delta;
     if (player.money < 0) player.money = 0;
     updateResourceBar();
 }
 
 function stat(key, delta){
+    if (!player.stats) player.stats = {};
     if (player.stats[key] === undefined) player.stats[key] = 0;
     player.stats[key] += delta;
     if (player.stats[key] < 0) player.stats[key] = 0;
 }
 
 function statMom(key, delta){
+    if (!player.mom) player.mom = {};
     if (player.mom[key] === undefined) player.mom[key] = 0;
     player.mom[key] += delta;
 }
@@ -743,6 +809,7 @@ function statMaxim(key, delta){
 }
 
 function statEnemy(key, delta){
+    if (!player.enemy) player.enemy = {};
     if (player.enemy[key] === undefined) player.enemy[key] = 0;
     player.enemy[key] += delta;
 }
@@ -752,18 +819,12 @@ function chance(p){ return Math.random() < p; }
 
 /* ============================================================
    СИСТЕМА ДНЕЙ
+   storyFlags НЕ сбрасываются между днями — только dayFlags
    ============================================================ */
 function nextDay(){
-    const box = document.getElementById('sceneBox');
-    if (box){
-        box.style.animation = 'none';
-        void box.offsetWidth;
-    }
-
     player.day++;
     player.storyDay++;
     dayFlags = {};
-
     showScene('main');
 }
 
@@ -772,6 +833,8 @@ function nextAct(){
     player.day = 1;
     player.storyDay = 1;
     dayFlags = {};
+    storyFlags = {};
+    resetDecorLayers();
     showScene('act_transition');
 }
 
@@ -781,6 +844,8 @@ function startAct(actNumber){
         player.day = 1;
         player.storyDay = 1;
         dayFlags = {};
+        storyFlags = {};
+        resetDecorLayers();
         showToast('📖','Акт 1','Начинаем с 10 лет.');
         setTimeout(() => showScene('main'), 1500);
         return;
@@ -790,11 +855,14 @@ function startAct(actNumber){
         player.day = 1;
         player.storyDay = 1;
         dayFlags = {};
+        storyFlags = {};
+        resetDecorLayers();
         showToast('📖','Акт 2','Начинаем с 11 лет.');
         setTimeout(() => showScene('main'), 1500);
         return;
     }
 }
+
 
 /* ============================================================
    ПОЛУЧЕНИЕ СЦЕНЫ ТЕКУЩЕГО ДНЯ
