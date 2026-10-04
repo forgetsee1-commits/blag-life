@@ -1,3 +1,23 @@
+'use strict';
+
+/* ============================================================
+   ФЛАГИ И ХЕЛПЕРЫ ДЕКОРА
+   ============================================================ */
+const DECOR_DEBUG = false;
+
+const DECOR_PREFS = {
+    reduceMotion: (typeof window !== 'undefined' && window.matchMedia)
+        ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        : false,
+    lowPower: (typeof navigator !== 'undefined' && navigator.hardwareConcurrency)
+        ? navigator.hardwareConcurrency <= 4
+        : false
+};
+
+function decorLog(...args){
+    if (DECOR_DEBUG) console.log('[ДЕКОР]', ...args);
+}
+
 /* ============================================================
    ДЕКОР — КОШКА НА РАМКЕ
    ============================================================ */
@@ -60,8 +80,11 @@ function renderCatDecor(){
    ДЕКОР — КРОВЬ
    ============================================================ */
 function renderBloodDecor(){
+    // Меньше частиц на слабых устройствах
+    const splatterCount = DECOR_PREFS.lowPower ? 8 : 12;
+
     let splatters = '';
-    for (let i = 0; i < 12; i++){
+    for (let i = 0; i < splatterCount; i++){
         const size = 4 + Math.random() * 14;
         const left = Math.random() * 100;
         const top = Math.random() * 100;
@@ -139,7 +162,12 @@ function generateRaindrops(){
     if (bg.dataset.ready === '1') return;
     bg.innerHTML = '';
 
-    for (let i = 0; i < 20; i++){
+    // Адаптив: на слабых — меньше капель
+    const counts = DECOR_PREFS.lowPower
+        ? { normal: 12, big: 8, small: 12 }
+        : { normal: 20, big: 12, small: 20 };
+
+    for (let i = 0; i < counts.normal; i++){
         const drop = document.createElement('div');
         drop.className = 'raindrop';
         drop.style.left = Math.random() * 100 + '%';
@@ -148,7 +176,7 @@ function generateRaindrops(){
         bg.appendChild(drop);
     }
 
-    for (let i = 0; i < 12; i++){
+    for (let i = 0; i < counts.big; i++){
         const drop = document.createElement('div');
         drop.className = 'raindrop big';
         drop.style.left = Math.random() * 100 + '%';
@@ -157,7 +185,7 @@ function generateRaindrops(){
         bg.appendChild(drop);
     }
 
-    for (let i = 0; i < 20; i++){
+    for (let i = 0; i < counts.small; i++){
         const drop = document.createElement('div');
         drop.className = 'raindrop small';
         drop.style.left = Math.random() * 100 + '%';
@@ -183,6 +211,7 @@ function generateRaindrops(){
 function generateDiscoLights(){
     const bg = document.getElementById('discoBg');
     if (!bg) return;
+    if (bg.dataset.ready === '1') return;
     bg.innerHTML = '';
 
     const colors = ['pink', 'blue', 'purple', 'yellow', 'green'];
@@ -199,7 +228,8 @@ function generateDiscoLights(){
     beam.className = 'disco-beam';
     bg.appendChild(beam);
 
-    for (let i = 0; i < 30; i++){
+    const sparkCount = DECOR_PREFS.lowPower ? 16 : 30;
+    for (let i = 0; i < sparkCount; i++){
         const spark = document.createElement('div');
         spark.className = 'disco-spark';
         spark.style.left = Math.random() * 100 + '%';
@@ -208,6 +238,8 @@ function generateDiscoLights(){
         spark.style.animationDuration = (1 + Math.random() * 1.5) + 's';
         bg.appendChild(spark);
     }
+
+    bg.dataset.ready = '1';
 }
 
 /* ============================================================
@@ -219,7 +251,8 @@ function generateFog(){
     if (bg.dataset.ready === '1') return;
     bg.innerHTML = '';
 
-    for (let i = 0; i < 4; i++){
+    const layerCount = DECOR_PREFS.lowPower ? 3 : 4;
+    for (let i = 0; i < layerCount; i++){
         const layer = document.createElement('div');
         layer.className = 'fog-layer';
         bg.appendChild(layer);
@@ -237,7 +270,8 @@ function generateLamps(){
     if (bg.dataset.ready === '1') return;
     bg.innerHTML = '';
 
-    for (let i = 0; i < 5; i++){
+    const count = DECOR_PREFS.lowPower ? 4 : 5;
+    for (let i = 0; i < count; i++){
         const lamp = document.createElement('div');
         lamp.className = 'lamp';
         bg.appendChild(lamp);
@@ -252,8 +286,11 @@ function generateLamps(){
 function generateStars(){
     const bg = document.getElementById('starsBg');
     if (!bg) return;
+    if (bg.dataset.ready === '1') return;
+    bg.innerHTML = '';
 
-    for (let i = 0; i < 90; i++){
+    const count = DECOR_PREFS.lowPower ? 55 : 90;
+    for (let i = 0; i < count; i++){
         const star = document.createElement('div');
         star.className = 'star' + (Math.random() < 0.2 ? ' big' : '');
         star.style.left = Math.random() * 100 + '%';
@@ -263,21 +300,27 @@ function generateStars(){
         star.style.opacity = 0.3 + Math.random() * 0.7;
         bg.appendChild(star);
     }
+
+    bg.dataset.ready = '1';
 }
 
 /* ============================================================
-   ДЕКОР ФОНА — ЛИСТЬЯ И ПЫЛИНКИ
+   ДЕКОР ФОНА — ЛИСТЬЯ
    ============================================================ */
 function generateFgDecor(){
     const fg = document.getElementById('fgDecor');
     if (!fg) return;
+    if (fg.dataset.ready === '1') return;
+    fg.innerHTML = '';
 
-    // 30 листьев
-    for (let i = 0; i < 30; i++){
+    const count = DECOR_PREFS.lowPower ? 18 : 30;
+    for (let i = 0; i < count; i++){
         const leaf = document.createElement('div');
         leaf.className = 'leaf';
         fg.appendChild(leaf);
     }
+
+    fg.dataset.ready = '1';
 }
 
 /* ============================================================
@@ -289,7 +332,8 @@ function generateBgDots(){
     if (bg.dataset.ready === '1') return;
     bg.innerHTML = '';
 
-    for (let i = 0; i < 12; i++){
+    const count = DECOR_PREFS.lowPower ? 8 : 12;
+    for (let i = 0; i < count; i++){
         const dot = document.createElement('div');
         dot.className = 'dot';
         dot.style.left = Math.random() * 100 + '%';
@@ -303,80 +347,117 @@ function generateBgDots(){
 }
 
 /* ============================================================
-   СКРИМЕР — кошачье лицо
+   СКРИМЕР — КОШАЧЬЕ ЛИЦО
    ============================================================ */
+let catScareRunning = false;
+
 function catJumpscare(){
-    // Кулдаун 2 минуты
+    if (catScareRunning) return;
+
     const lastScare = localStorage.getItem('cat_scare_time');
     const now = Date.now();
 
-    if (lastScare && (now - parseInt(lastScare)) < 120000){
+    if (lastScare && (now - parseInt(lastScare, 10)) < 120000){
         return;
     }
 
-    localStorage.setItem('cat_scare_time', now.toString());
+    catScareRunning = true;
+    try {
+        localStorage.setItem('cat_scare_time', String(now));
+    } catch(e){
+        // localStorage может быть недоступен — не критично
+    }
 
-    // 1. Хоррор-режим (серый, замерло)
     document.body.classList.add('horror-mode');
 
-    // 2. Через 2 секунды — тишина, потом скример
+    // Уборщик — сброс через максимум 5 сек, что бы ни случилось
+    const cleanup = () => {
+        document.body.classList.remove('horror-mode');
+        catScareRunning = false;
+    };
+    const cleanupTimer = setTimeout(cleanup, 5000);
+
     setTimeout(() => {
         const jumpscare = document.getElementById('catJumpscare');
         const face = document.getElementById('catFace');
         const flash = document.getElementById('catFlash');
 
-        if (!jumpscare) return;
+        if (!jumpscare){
+            clearTimeout(cleanupTimer);
+            cleanup();
+            return;
+        }
 
-        // 3. ЗВУК — ИМЕННО В МОМЕНТ ПОЯВЛЕНИЯ ЛИЦА
         playCatScream();
 
-        // 4. Показываем лицо
         jumpscare.classList.add('active');
-        face.classList.add('shake');
+        if (face) face.classList.add('shake');
 
-        // 5. Вспышка
         if (flash){
             flash.classList.add('active');
             setTimeout(() => flash.classList.remove('active'), 500);
         }
 
-        // 6. Через 1.5 сек — убираем
         setTimeout(() => {
             jumpscare.classList.remove('active');
-            face.classList.remove('shake');
+            if (face) face.classList.remove('shake');
 
             setTimeout(() => {
-                document.body.classList.remove('horror-mode');
+                clearTimeout(cleanupTimer);
+                cleanup();
             }, 500);
-
         }, 1500);
     }, 2000);
 }
 
+// Если игрок свернул вкладку/Telegram во время скримера — сбросить всё
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && catScareRunning){
+        document.body.classList.remove('horror-mode');
+        const jumpscare = document.getElementById('catJumpscare');
+        const face = document.getElementById('catFace');
+        const flash = document.getElementById('catFlash');
+        if (jumpscare) jumpscare.classList.remove('active');
+        if (face) face.classList.remove('shake');
+        if (flash) flash.classList.remove('active');
+        catScareRunning = false;
+    }
+});
+
 /* ============================================================
    ЗВУК СКРИМЕРА
    ============================================================ */
+let catScreamAudio = null;
+
 function playCatScream(){
-    const url = 'assets/sounds/cat-scream.mp3';
-    console.log('[ЗВУК] пробую:', url);
-
     try {
-        const audio = new Audio(url);
+        // Останавливаем предыдущий, если играет
+        if (catScreamAudio){
+            try { catScreamAudio.pause(); } catch(e){}
+            catScreamAudio = null;
+        }
+
+        const audio = new Audio('assets/sounds/cat-scream.mp3');
+        audio.preload = 'auto';
         audio.volume = 0.5;
+        catScreamAudio = audio;
 
-        audio.addEventListener('canplaythrough', () => {
-            console.log('[ЗВУК] файл загружен');
+        audio.addEventListener('ended', () => {
+            if (catScreamAudio === audio) catScreamAudio = null;
         });
 
-        audio.addEventListener('error', (e) => {
-            console.log('[ЗВУК] ОШИБКА загрузки:', e);
+        audio.addEventListener('error', () => {
+            decorLog('Ошибка загрузки звука скримера');
+            if (catScreamAudio === audio) catScreamAudio = null;
         });
 
-        audio.play()
-            .then(() => console.log('[ЗВУК] играет'))
-            .catch(e => console.log('[ЗВУК] ошибка play:', e.name, e.message));
-
+        const p = audio.play();
+        if (p && typeof p.catch === 'function'){
+            p.catch((e) => {
+                decorLog('Не удалось воспроизвести:', e && e.name);
+            });
+        }
     } catch(e){
-        console.log('[ЗВУК] ошибка:', e);
+        decorLog('Ошибка звука:', e);
     }
 }
