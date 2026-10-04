@@ -99,7 +99,7 @@
 <div class="splash-screen" id="splashScreen">
     <div class="splash-inner">
 
-        <!-- Ретро-пиксельные квадраты по краям -->
+        <!-- Ретро-пиксельные квадраты -->
         <div class="splash-squares">
             <span class="splash-square sq-1"></span>
             <span class="splash-square sq-2"></span>
@@ -109,33 +109,9 @@
             <span class="splash-square sq-6"></span>
             <span class="splash-square sq-7"></span>
             <span class="splash-square sq-8"></span>
+            <span class="splash-square sq-9"></span>
+            <span class="splash-square sq-10"></span>
         </div>
-
-        <!-- Небо с самолётом и сердечком -->
-        <svg class="splash-sky" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-
-            <!-- Путь сердечка (по нему летит самолёт) -->
-            <path id="heartPath"
-                  class="splash-heart"
-                  d="M 200 100
-                     C 200 70, 160 50, 130 70
-                     C 100 90, 100 130, 130 160
-                     L 200 230
-                     L 270 160
-                     C 300 130, 300 90, 270 70
-                     C 240 50, 200 70, 200 100 Z"
-                  fill="none"
-                  stroke="#d97a6c"
-                  stroke-width="4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"/>
-
-            <!-- Самолётик — летит по контуру сердечка -->
-            <g class="splash-plane" id="splashPlane">
-                <path d="M -14 -5 L 14 0 L -14 5 L -6 0 Z" fill="#2a1f18"/>
-                <circle cx="-2" cy="0" r="1.4" fill="#d97a6c"/>
-            </g>
-        </svg>
 
         <!-- Логотип -->
         <div class="splash-logo">ЛАЙФ БЛАГА</div>
