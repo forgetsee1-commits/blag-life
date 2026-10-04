@@ -822,13 +822,13 @@ strong { color: var(--ink); font-weight: 700; }
     align-items: center;
     justify-content: center;
     padding: 20px;
-    animation: splashFade 3.2s ease forwards;
+    animation: splashFade 4s ease forwards;
     pointer-events: none;
     overflow: hidden;
 }
 
 @keyframes splashFade {
-    0%, 82% { opacity: 1; }
+    0%, 88% { opacity: 1; }
     100%    { opacity: 0; visibility: hidden; }
 }
 
@@ -838,14 +838,85 @@ strong { color: var(--ink); font-weight: 700; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 16px;
     text-align: center;
     width: 100%;
     max-width: 420px;
 }
 
-/* Небо с самолётом */
+/* ============================================================
+   РЕТРО-ПИКСЕЛЬНЫЕ КВАДРАТЫ (вместо кругов)
+   ============================================================ */
+.splash-squares {
+    position: absolute;
+    inset: -60px -40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.splash-square {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--accent);
+    background: transparent;
+    image-rendering: pixelated;
+    box-shadow: 0 0 0 1px rgba(217, 122, 108, 0.15);
+    animation: squareSpin 4s linear infinite;
+}
+
+.splash-square::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--accent);
+    opacity: 0.9;
+}
+
+/* Разные цвета */
+.sq-1 { border-color: var(--accent);   }
+.sq-2 { border-color: var(--accent-2); }
+.sq-3 { border-color: var(--accent-3); }
+.sq-4 { border-color: var(--accent-4); }
+.sq-5 { border-color: var(--accent-5); }
+.sq-6 { border-color: var(--accent-6); }
+.sq-7 { border-color: var(--accent);   }
+.sq-8 { border-color: var(--accent-2); }
+
+.sq-1::after { background: var(--accent);   }
+.sq-2::after { background: var(--accent-2); }
+.sq-3::after { background: var(--accent-3); }
+.sq-4::after { background: var(--accent-4); }
+.sq-5::after { background: var(--accent-5); }
+.sq-6::after { background: var(--accent-6); }
+.sq-7::after { background: var(--accent);   }
+.sq-8::after { background: var(--accent-2); }
+
+/* Позиции — по орбите вокруг центра */
+.sq-1 { top: 8%;  left: 12%; animation-duration: 3.5s; }
+.sq-2 { top: 22%; right: 8%;  animation-duration: 4.2s; }
+.sq-3 { top: 48%; left: 4%;   animation-duration: 5s;   width: 18px; height: 18px; }
+.sq-4 { top: 70%; right: 14%; animation-duration: 3.8s; }
+.sq-5 { bottom: 12%; left: 18%; animation-duration: 4.5s; }
+.sq-6 { bottom: 8%; right: 22%; animation-duration: 5.5s; }
+.sq-7 { top: 12%; right: 30%; animation-duration: 4.8s;   width: 10px; height: 10px; }
+.sq-8 { bottom: 18%; left: 42%; animation-duration: 3.2s; width: 16px; height: 16px; }
+
+/* Вращение + мерцание */
+@keyframes squareSpin {
+    0%   { transform: rotate(0deg)   scale(1);    opacity: 0.5; }
+    25%  { transform: rotate(90deg)  scale(1.15); opacity: 1;   }
+    50%  { transform: rotate(180deg) scale(1);    opacity: 0.7; }
+    75%  { transform: rotate(270deg) scale(1.15); opacity: 1;   }
+    100% { transform: rotate(360deg) scale(1);    opacity: 0.5; }
+}
+
+/* ============================================================
+   НЕБО С САМОЛЁТОМ
+   ============================================================ */
 .splash-sky {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 380px;
     height: auto;
@@ -853,65 +924,58 @@ strong { color: var(--ink); font-weight: 700; }
     overflow: visible;
 }
 
-/* Инверсионный след — рисуется одновременно с полётом */
-.splash-trail {
-    stroke-dasharray: 400;
-    stroke-dashoffset: 400;
-    animation: trailGrow 2.2s ease-out 0.1s forwards;
-}
-
-@keyframes trailGrow {
-    to { stroke-dashoffset: 0; }
-}
-
-/* Сердечко — рисуется следом за самолётом */
+/* Сердечко — рисуется линией */
 .splash-heart {
-    stroke-dasharray: 700;
-    stroke-dashoffset: 700;
-    animation: heartDraw 1.8s ease-in-out 1.4s forwards;
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+    animation: heartDraw 3s ease-in-out 0.6s forwards;
     filter: drop-shadow(0 2px 0 rgba(217, 122, 108, 0.25));
 }
 
 @keyframes heartDraw {
-    0%   { stroke-dashoffset: 700; opacity: 0; }
-    10%  { opacity: 1; }
-    100% { stroke-dashoffset: 0; opacity: 1; }
+    0%   { stroke-dashoffset: 900; opacity: 1; }
+    100% { stroke-dashoffset: 0;   opacity: 1; }
 }
 
-/* Самолётик — летит по дуге */
+/* Самолётик — летит по контуру сердечка */
 .splash-plane {
-    animation: planeFly 2.4s ease-in-out 0.1s forwards;
-    transform-origin: center;
-    filter: drop-shadow(0 2px 0 rgba(74, 58, 42, 0.25));
+    /* Если браузер поддерживает offset-path — летит по контуру */
+    offset-path: path("M 200 100 C 200 70, 160 50, 130 70 C 100 90, 100 130, 130 160 L 200 230 L 270 160 C 300 130, 300 90, 270 70 C 240 50, 200 70, 200 100 Z");
+    offset-rotate: auto;
+    offset-distance: 0%;
+    animation: planeFlyAlongHeart 3s ease-in-out 0.6s forwards;
+    filter: drop-shadow(0 1px 0 rgba(74, 58, 42, 0.3));
 }
 
-@keyframes planeFly {
-    0% {
-        transform: translate(-30px, 140px) rotate(-15deg) scale(0.7);
-        opacity: 0;
+@keyframes planeFlyAlongHeart {
+    0%   { offset-distance: 0%;   opacity: 0; transform: scale(0.8); }
+    5%   { opacity: 1; }
+    95%  { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; transform: scale(0.8); }
+}
+
+/* ============================================================
+   FALLBACK для браузеров без offset-path
+   Самолётик просто летит по прямой слева-направо
+   ============================================================ */
+@supports not (offset-path: path("M 0 0 L 1 1")) {
+    .splash-plane {
+        offset-path: none;
+        animation: planeFlyFallback 3s ease-in-out 0.6s forwards;
     }
-    10% {
-        opacity: 1;
-    }
-    35% {
-        transform: translate(90px, 80px) rotate(-22deg) scale(1);
-    }
-    60% {
-        transform: translate(180px, 95px) rotate(-8deg) scale(1);
-    }
-    85% {
-        transform: translate(270px, 130px) rotate(15deg) scale(1);
-    }
-    95% {
-        opacity: 1;
-    }
-    100% {
-        transform: translate(340px, 160px) rotate(25deg) scale(0.9);
-        opacity: 0;
+
+    @keyframes planeFlyFallback {
+        0%   { transform: translate(-30px, 160px) rotate(-20deg); opacity: 0; }
+        10%  { opacity: 1; }
+        50%  { transform: translate(180px, 100px) rotate(0deg); }
+        90%  { opacity: 1; }
+        100% { transform: translate(400px, 160px) rotate(20deg); opacity: 0; }
     }
 }
 
-/* Логотип */
+/* ============================================================
+   ЛОГОТИП
+   ============================================================ */
 .splash-logo {
     position: relative;
     z-index: 5;
@@ -923,7 +987,7 @@ strong { color: var(--ink); font-weight: 700; }
     text-shadow:
         3px 3px 0 var(--accent),
         6px 6px 0 rgba(74, 58, 42, 0.15);
-    animation: logoPop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) 2s forwards;
+    animation: logoPop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) 3.2s forwards;
     opacity: 0;
     transform: scale(0.6);
     line-height: 1.3;
@@ -947,7 +1011,7 @@ strong { color: var(--ink); font-weight: 700; }
     text-transform: uppercase;
     letter-spacing: 3px;
     opacity: 0;
-    animation: subFade 0.6s ease 2.4s forwards;
+    animation: subFade 0.6s ease 3.6s forwards;
     text-align: center;
 }
 
@@ -956,11 +1020,13 @@ strong { color: var(--ink); font-weight: 700; }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Уважение к настройке «меньше анимаций» */
+/* ============================================================
+   Уважение к prefers-reduced-motion
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
     .splash-screen { animation-duration: 0.01ms !important; }
+    .splash-square,
     .splash-plane,
-    .splash-trail,
     .splash-heart,
     .splash-logo,
     .splash-sub {
