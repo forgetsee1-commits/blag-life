@@ -360,22 +360,26 @@ function catJumpscare(){
    ЗВУК СКРИМЕРА
    ============================================================ */
 function playCatScream(){
-    try {
-        const audio = new Audio('assets/sounds/cat-scream.mp3');
-        audio.volume = 0.5;
-        audio.play().catch(e => {
-            // Если браузер не разрешил — тихо молчим
-            console.log('Звук не воспроизведён:', e);
-        });
-    } catch(e){
-        console.log('Ошибка звука:', e);
-    }
-}
+    const url = 'assets/sounds/cat-scream.mp3';
+    console.log('[ЗВУК] пробую:', url);
 
-function playCatScream(){
     try {
-        const audio = new Audio('assets/sounds/cat-scream.mp3');
+        const audio = new Audio(url);
         audio.volume = 0.5;
-        audio.play().catch(() => {});
-    } catch(e){}
+
+        audio.addEventListener('canplaythrough', () => {
+            console.log('[ЗВУК] файл загружен');
+        });
+
+        audio.addEventListener('error', (e) => {
+            console.log('[ЗВУК] ОШИБКА загрузки:', e);
+        });
+
+        audio.play()
+            .then(() => console.log('[ЗВУК] играет'))
+            .catch(e => console.log('[ЗВУК] ошибка play:', e.name, e.message));
+
+    } catch(e){
+        console.log('[ЗВУК] ошибка:', e);
+    }
 }
