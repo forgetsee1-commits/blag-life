@@ -1,5 +1,7 @@
 /* ============================================================
    АКТ 1 · 10 ЛЕТ
+   Флаги: сюжетные в storyFlags (живут всю игру),
+          дневные в dayFlags (сбрасываются nextDay)
    ============================================================ */
 
 const act1Nodes = {
@@ -261,9 +263,6 @@ day1_speak_shy: {
     time: 'day',
     title: 'Застеснялся',
     text: () => {
-        if (isGirl()){
-            return `Ты мычишь что-то невнятное. Кто-то из класса хихикает.\n\nОльга Петровна говорит: «Ничего, привыкнешь». Но тебе стыдно.`;
-        }
         return `Ты мычишь что-то невнятное. Кто-то из класса хихикает.\n\nОльга Петровна говорит: «Ничего, привыкнешь». Но тебе стыдно.`;
     },
     onEnter: () => {
@@ -317,7 +316,7 @@ day1_vlad_angry: {
         return `«А тебе какое дело, лощёный?»\n\nВлад на секунду теряется, потом ухмыляется: «А ты ${g('дерзкий','дерзкая')}. Ладно, посмотрим, как ты запоёшь».\n\nОн уходит. Янчик рядом шепчет: «Зря ты так. У него отец в администрации».`;
     },
     onEnter: () => {
-        dayFlags.vladReaction = 'angry';
+        storyFlags.vladReaction = 'angry';
         statEnemy('relationship', -2);
         player.enemies = (player.enemies || 0) + 1;
     },
@@ -334,7 +333,7 @@ day1_vlad_silent: {
         return `Ты молчишь. Влад ржёт громче: «Чё, язык проглотил?»\n\nНо потом ему становится скучно, и он уходит. Пацаны за ним.\n\nЧто-то внутри тебя сжалось.`;
     },
     onEnter: () => {
-        dayFlags.vladReaction = 'silent';
+        storyFlags.vladReaction = 'silent';
         stat('happiness', -2);
         statEnemy('relationship', -1);
     },
@@ -351,7 +350,7 @@ day1_vlad_joke: {
         return `«Секонд-хенд? Да у нас весь район в нём одевается. Ты чё, с Луны свалился?»\n\nПацаны Влада ржут — но уже НАД НИМ. Влад краснеет и уходит.`;
     },
     onEnter: () => {
-        dayFlags.vladReaction = 'joke';
+        storyFlags.vladReaction = 'joke';
         if (player.stats.charisma >= 5) {
             stat('charisma', 1);
             stat('happiness', 2);
@@ -446,7 +445,7 @@ day2_start: {
     decor: 'rain',
     title: 'Утро · вторник',
     text: () => {
-        const vlad = dayFlags.vladReaction || 'default';
+        const vlad = storyFlags.vladReaction || 'default';
         let vladLine = '';
         if (vlad === 'angry') vladLine = 'Вчера ты резко ответил Владу. Слух разнёсся по всей школе.';
         if (vlad === 'silent') vladLine = 'Вчера ты проглотил насмешку Влада. Кто-то видел — и сегодня будут шутить.';
@@ -569,7 +568,7 @@ day2_agree_vlad: {
         return `«Ну ладно, зайду». Влад ухмыляется: «Не пожалеешь». Пацаны за спиной переглядываются.\n\nЯнчик молча смотрит тебе вслед.`;
     },
     onEnter: () => {
-        dayFlags.wentWithVlad = true;
+        storyFlags.wentWithVlad = true;
         statEnemy('relationship', 1);
     },
     choices: [
@@ -623,7 +622,7 @@ day2_after_school: {
     choices: () => {
         const list = [];
 
-        if (dayFlags.wentWithVlad){
+        if (storyFlags.wentWithVlad){
             list.push({ text: '🍔 Пойти в Милк с Владом', next: 'day2_milk' });
         }
 
@@ -1729,7 +1728,7 @@ day7_ignore: {
         return `Ты опускаешь глаза и проходишь мимо. Кирилл не окликает.\n\nНо ты чувствуешь его взгляд в спину. Что-то внутри шепчет — ты упустил что-то важное.`;
     },
     onEnter: () => {
-        dayFlags.missedKirill = true;
+        storyFlags.missedKirill = true;
     },
     choices: [
         { text: '🏫 В школу', next: 'day7_school' }
@@ -1774,7 +1773,7 @@ day7_agree: {
         money(500);
         stat('happiness', 2);
         stat('charisma', 1);
-        dayFlags.tookKirillDeal = true;
+        storyFlags.tookKirillDeal = true;
     },
     choices: [
         { text: '🏃 Обратно к Кириллу', next: 'day7_return' }
@@ -1802,7 +1801,7 @@ day7_decline: {
     },
     onEnter: () => {
         stat('happiness', 1);
-        dayFlags.declinedKirill = true;
+        storyFlags.declinedKirill = true;
     },
     choices: [
         { text: '🏫 В школу', next: 'day7_school' }
@@ -1814,13 +1813,13 @@ day7_school: {
     time: 'day',
     title: 'Школа',
     text: () => {
-        if (dayFlags.missedKirill){
+        if (storyFlags.missedKirill){
             return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nТы отвлекаешься. В голове — утренняя встреча. Кирилл ждал тебя. Зачем? Ты не узнал.\n\nЧто дальше?`;
         }
-        if (dayFlags.declinedKirill){
+        if (storyFlags.declinedKirill){
             return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nТы отвлекаешься. В голове — Кирилл, пакет, 500 рублей. Ты отказался. Но что-то грызёт изнутри.\n\nЧто дальше?`;
         }
-        if (dayFlags.tookKirillDeal){
+        if (storyFlags.tookKirillDeal){
             return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nТы отвлекаешься. В голове — Кирилл, пакет, 500 рублей. Ты взял. И не уверен, правильно ли.\n\nЧто дальше?`;
         }
         return `Обычный учебный день. Контрольная по русскому, потом физра.\n\nЧто дальше?`;
@@ -1835,13 +1834,13 @@ day7_after_school: {
     time: 'evening',
     title: 'После школы',
     text: () => {
-        if (dayFlags.missedKirill){
+        if (storyFlags.missedKirill){
             return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nТы прошёл мимо Кирилла. Не подошёл. Может, зря, а может — и правильно. Ты не узнаешь.\n\nВпереди — новые дни. Что дальше?`;
         }
-        if (dayFlags.tookKirillDeal){
+        if (storyFlags.tookKirillDeal){
             return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nВ кармане — 500 рублей. Первые «взрослые» деньги. Ты ещё не знаешь, что с ними делать.\n\nВпереди — новые дни. Что дальше?`;
         }
-        if (dayFlags.declinedKirill){
+        if (storyFlags.declinedKirill){
             return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nТы отказался. Сказал «нет». Но кто-то внутри шепчет: а может, зря?\n\nВпереди — новые дни. Что дальше?`;
         }
         return `Ты выходишь из школы. Первая неделя учебного года закончилась.\n\nЧто дальше? Ты пока не знаешь. Но чувствуешь — это только начало.`;
@@ -1862,7 +1861,7 @@ day7_home: {
         const list = [
             { text: '😐 Сказать «норм» и уйти в комнату', next: 'day7_hide_mom' }
         ];
-        if (!dayFlags.missedKirill){
+        if (!storyFlags.missedKirill){
             list.unshift({ text: '💬 Рассказать про Кирилла', next: 'day7_tell_mom' });
         }
         return list;
@@ -1874,17 +1873,17 @@ day7_tell_mom: {
     time: 'evening',
     title: 'Разговор с мамой',
     text: () => {
-        if (dayFlags.tookKirillDeal){
+        if (storyFlags.tookKirillDeal){
             return `Ты рассказываешь. Про Кирилла, про пакет, про 500 рублей.\n\nМама бледнеет. Кладёт ложку. Садится напротив.\n\n«${player.name}, послушай меня внимательно. Я всю жизнь работаю на заводе за копейки. И знаешь что? Лучше так, чем через чужое. Эти люди — они не друзья. Они используют. Сегодня пакет, завтра — срок. Понимаешь?»\n\nОна смотрит тебе в глаза.`;
         }
-        if (dayFlags.declinedKirill){
+        if (storyFlags.declinedKirill){
             return `Ты рассказываешь. Про Кирилла — как он ждал у школы, как предлагал «дело». Как ты отказался.\n\nМама слушает молча. Потом кивает:\n\n«Правильно. Я всю жизнь работаю на заводе за копейки. И знаешь что? Лучше так, чем через чужое. Эти люди — они не друзья. Они используют. Ты ${g('сделал','сделала')} правильно, что ${g('отказался','отказалась')}».\n\nОна смотрит тебе в глаза.`;
         }
         return `Ты рассказываешь про день. Про школу, про пацанов. Про то, что чувствуешь — что-то меняется.\n\nМама слушает молча. Потом говорит:\n\n«Я всю жизнь работаю на заводе за копейки. И знаешь что? Лучше так, чем через чужое. Не лезь туда, где тебе не место. Понимаешь?»\n\nОна смотрит тебе в глаза.`;
     },
     onEnter: () => {
         statMom('relationship', 2);
-        if (dayFlags.tookKirillDeal) {
+        if (storyFlags.tookKirillDeal) {
             stat('happiness', -1);
         } else {
             stat('happiness', 1);
@@ -1916,13 +1915,13 @@ day7_hide_mom: {
     time: 'evening',
     title: 'В комнату',
     text: () => {
-        if (dayFlags.tookKirillDeal){
+        if (storyFlags.tookKirillDeal){
             return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nВ кармане — 500 рублей. Первые заработанные «не по-детски».\n\nТы смотришь в потолок. Первая неделя школы закончилась. А кажется — прошла целая жизнь.`;
         }
-        if (dayFlags.declinedKirill){
+        if (storyFlags.declinedKirill){
             return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nВ кармане пусто. Ты ${g('отказался','отказалась')} — и правильно. Но что-то грызёт изнутри.\n\nТы смотришь в потолок. Первая неделя школы закончилась.`;
         }
-        if (dayFlags.missedKirill){
+        if (storyFlags.missedKirill){
             return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nТы прошёл мимо Кирилла. Не подошёл. Что он хотел — ты уже не узнаешь.\n\nТы смотришь в потолок. Первая неделя школы закончилась.`;
         }
         return `Ты уходишь в комнату. Закрываешь дверь. Садишься на кровать.\n\nТы смотришь в потолок. Первая неделя школы закончилась. А кажется — прошла целая жизнь.`;
@@ -1941,11 +1940,11 @@ day7_sleep: {
     title: 'Конец первой недели',
     text: () => {
         let line = '';
-        if (dayFlags.tookKirillDeal) {
+        if (storyFlags.tookKirillDeal) {
             line = `Ты ${g('взял','взяла')} первые «взрослые» деньги. И уже не уверен, что сможешь остановиться.`;
-        } else if (dayFlags.declinedKirill) {
+        } else if (storyFlags.declinedKirill) {
             line = `Ты ${g('отказался','отказалась')}. Пока. Но Кирилл запомнил тебя — и это не конец.`;
-        } else if (dayFlags.missedKirill) {
+        } else if (storyFlags.missedKirill) {
             line = 'Ты прошёл мимо. Что было бы, если бы подошёл — уже не узнать.';
         } else {
             line = `Ты так и не ${g('понял','поняла')}, что это было. Но что-то внутри изменилось.`;
