@@ -1,72 +1,66 @@
+'use strict';
+
 /* ============================================================
    СБОРКА STORY NODES
+   ВАЖНО: storyNodes объявлен в engine.js через var,
+   здесь мы его НАПОЛНЯЕМ, а не переопределяем (иначе TDZ).
    ============================================================ */
-const storyNodes = {
-    ...act1Nodes,
-    ...act2Nodes
-};
+
+if (typeof act1Nodes === 'undefined'){
+    console.error('act1Nodes не определён. Проверь story-act1.js');
+}
+if (typeof act2Nodes === 'undefined'){
+    console.error('act2Nodes не определён. Проверь story-act2.js');
+}
+
+Object.assign(
+    storyNodes,
+    typeof act1Nodes !== 'undefined' ? act1Nodes : {},
+    typeof act2Nodes !== 'undefined' ? act2Nodes : {}
+);
 
 /* ============================================================
    TELEGRAM MINI APP
    ============================================================ */
 (function initTelegram(){
-    if (window.Telegram && window.Telegram.WebApp){
-        const tg = window.Telegram.WebApp;
-        const version = parseFloat(tg.version) || 0;
+    if (!window.Telegram || !window.Telegram.WebApp){
+        return;
+    }
 
-        try { tg.ready(); } catch(e){}
-        try { tg.expand(); } catch(e){}
+    const tg = window.Telegram.WebApp;
+    const version = parseFloat(tg.version) || 0;
 
-        // Только для новых версий
-        if (version >= 6.1){
-            try { tg.disableVerticalSwipes(); } catch(e){}
-            try { tg.setHeaderColor('#f5ecd9'); } catch(e){}
-            try { tg.setBackgroundColor('#f5ecd9'); } catch(e){}
+    try { tg.ready(); } catch(e){}
+    try { tg.expand(); } catch(e){}
+
+    // Только для новых версий
+    if (version >= 6.1){
+        try { tg.disableVerticalSwipes(); } catch(e){}
+        try { tg.setHeaderColor('#f5ecd9'); } catch(e){}
+        try { tg.setBackgroundColor('#f5ecd9'); } catch(e){}
+    }
+
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user){
+        const user = tg.initDataUnsafe.user;
+        const nameField = document.getElementById('nameInput');
+        if (nameField && !nameField.value){
+            nameField.value = user.first_name || user.username || '';
         }
-
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user){
-            const user = tg.initDataUnsafe.user;
-            const nameField = document.getElementById('nameInput');
-            if (nameField && !nameField.value){
-                nameField.value = user.first_name || user.username || '';
-            }
-        }
-        console.log('Mini App запущен в Telegram (v' + version + ')');
-    } else {
-        console.log('Игра запущена вне Telegram');
     }
 })();
 
 /* ============================================================
    ДЕКОР ФОНА — запуск
+   Проверяем, что функции из decor.js реально загрузились
    ============================================================ */
-generateStars();
-generateFgDecor();
-generateBgDots();
+if (typeof generateStars === 'function') generateStars();
+if (typeof generateFgDecor === 'function') generateFgDecor();
+if (typeof generateBgDots === 'function') generateBgDots();
 
 /* ============================================================
-   ВОССТАНОВЛЕНИЕ ИГРЫ (если есть сохранение)
+   ВОССТАНОВЛЕНИЕ ИГРЫ
+   Автозагрузку НЕ делаем — иначе конфликт с continueGame().
+   Если игрок нажмёт «Продолжить» — continueGame() сам вызовет loadGame().
+   Если «Начать» — startLife() создаст нового игрока.
    ============================================================ */
-(function tryRestore(){
-    try {
-        const saved = localStorage.getItem('blag_save');
-        if (!saved) return;
-
-        const data = JSON.parse(saved);
-        if (!data || !data.player) return;
-
-        // Автовосстановление только если игрок уже создан
-        // и жив (прошёл прологи)
-        if (data.player.name && data.player.age){
-            player = data.player;
-            storyFlags = data.storyFlags || {};
-            dayFlags = data.dayFlags || {};
-
-            // Не восстанавливаем экран — ждём действий пользователя
-            // Просто данные в памяти
-            console.log('Сохранение найдено, но не загружено автоматически');
-        }
-    } catch(e){
-        console.warn('Не удалось прочитать сохранение:', e);
-    }
-})();
+// (пусто — вся логика в engine.js: hasSave(), loadGame(), continueGame())
