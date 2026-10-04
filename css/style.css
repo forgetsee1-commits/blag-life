@@ -811,7 +811,7 @@ strong { color: var(--ink); font-weight: 700; }
 }
 
 /* ============================================================
-   ЗАСТАВКА — самолёт рисует сердечко
+   ЗАСТАВКА — ретро-пиксельные квадраты
    ============================================================ */
 .splash-screen {
     position: fixed;
@@ -822,13 +822,13 @@ strong { color: var(--ink); font-weight: 700; }
     align-items: center;
     justify-content: center;
     padding: 20px;
-    animation: splashFade 4s ease forwards;
+    animation: splashFade 3s ease forwards;
     pointer-events: none;
     overflow: hidden;
 }
 
 @keyframes splashFade {
-    0%, 88% { opacity: 1; }
+    0%, 82% { opacity: 1; }
     100%    { opacity: 0; visibility: hidden; }
 }
 
@@ -838,139 +838,109 @@ strong { color: var(--ink); font-weight: 700; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: 20px;
     text-align: center;
     width: 100%;
     max-width: 420px;
+    aspect-ratio: 1 / 1;
 }
 
 /* ============================================================
-   РЕТРО-ПИКСЕЛЬНЫЕ КВАДРАТЫ (вместо кругов)
+   РЕТРО-ПИКСЕЛЬНЫЕ КВАДРАТЫ
    ============================================================ */
 .splash-squares {
     position: absolute;
-    inset: -60px -40px;
+    inset: 0;
     pointer-events: none;
     z-index: 0;
 }
 
 .splash-square {
     position: absolute;
-    width: 14px;
-    height: 14px;
-    border: 2px solid var(--accent);
+    width: 16px;
+    height: 16px;
+    border: 3px solid var(--accent);
     background: transparent;
     image-rendering: pixelated;
-    box-shadow: 0 0 0 1px rgba(217, 122, 108, 0.15);
-    animation: squareSpin 4s linear infinite;
+    box-shadow:
+        0 0 0 1px rgba(74, 58, 42, 0.15),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    animation: squareSpin 5s linear infinite;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    transform-origin: center;
 }
 
 .splash-square::after {
     content: '';
     position: absolute;
-    inset: 2px;
+    inset: 3px;
     background: var(--accent);
     opacity: 0.9;
 }
 
-/* Разные цвета */
-.sq-1 { border-color: var(--accent);   }
-.sq-2 { border-color: var(--accent-2); }
-.sq-3 { border-color: var(--accent-3); }
-.sq-4 { border-color: var(--accent-4); }
-.sq-5 { border-color: var(--accent-5); }
-.sq-6 { border-color: var(--accent-6); }
-.sq-7 { border-color: var(--accent);   }
-.sq-8 { border-color: var(--accent-2); }
+/* Цвета */
+.sq-1  { border-color: var(--accent);   }
+.sq-2  { border-color: var(--accent-2); }
+.sq-3  { border-color: var(--accent-3); }
+.sq-4  { border-color: var(--accent-4); }
+.sq-5  { border-color: var(--accent-5); }
+.sq-6  { border-color: var(--accent-6); }
+.sq-7  { border-color: var(--accent);   }
+.sq-8  { border-color: var(--accent-2); }
+.sq-9  { border-color: var(--accent-3); }
+.sq-10 { border-color: var(--accent-4); }
 
-.sq-1::after { background: var(--accent);   }
-.sq-2::after { background: var(--accent-2); }
-.sq-3::after { background: var(--accent-3); }
-.sq-4::after { background: var(--accent-4); }
-.sq-5::after { background: var(--accent-5); }
-.sq-6::after { background: var(--accent-6); }
-.sq-7::after { background: var(--accent);   }
-.sq-8::after { background: var(--accent-2); }
+.sq-1::after  { background: var(--accent);   }
+.sq-2::after  { background: var(--accent-2); }
+.sq-3::after  { background: var(--accent-3); }
+.sq-4::after  { background: var(--accent-4); }
+.sq-5::after  { background: var(--accent-5); }
+.sq-6::after  { background: var(--accent-6); }
+.sq-7::after  { background: var(--accent);   }
+.sq-8::after  { background: var(--accent-2); }
+.sq-9::after  { background: var(--accent-3); }
+.sq-10::after { background: var(--accent-4); }
 
-/* Позиции — по орбите вокруг центра */
-.sq-1 { top: 8%;  left: 12%; animation-duration: 3.5s; }
-.sq-2 { top: 22%; right: 8%;  animation-duration: 4.2s; }
-.sq-3 { top: 48%; left: 4%;   animation-duration: 5s;   width: 18px; height: 18px; }
-.sq-4 { top: 70%; right: 14%; animation-duration: 3.8s; }
-.sq-5 { bottom: 12%; left: 18%; animation-duration: 4.5s; }
-.sq-6 { bottom: 8%; right: 22%; animation-duration: 5.5s; }
-.sq-7 { top: 12%; right: 30%; animation-duration: 4.8s;   width: 10px; height: 10px; }
-.sq-8 { bottom: 18%; left: 42%; animation-duration: 3.2s; width: 16px; height: 16px; }
+/* Позиции по орбите — разные радиусы, разные скорости */
+/* Радиус 1: ~140px (близко к краю) */
+.sq-1  { transform: rotate(0deg)   translate(140px) rotate(0deg);    animation-duration: 4s;   }
+.sq-2  { transform: rotate(72deg)  translate(140px) rotate(-72deg);  animation-duration: 5.2s; }
+.sq-3  { transform: rotate(144deg) translate(140px) rotate(-144deg); animation-duration: 4.6s; width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+.sq-4  { transform: rotate(216deg) translate(140px) rotate(-216deg); animation-duration: 5.8s; }
+.sq-5  { transform: rotate(288deg) translate(140px) rotate(-288deg); animation-duration: 4.2s; }
 
-/* Вращение + мерцание */
+/* Радиус 2: ~100px */
+.sq-6  { transform: rotate(36deg)  translate(100px) rotate(-36deg);  animation-duration: 6.4s; width: 12px; height: 12px; margin: -6px 0 0 -6px; }
+.sq-7  { transform: rotate(144deg) translate(100px) rotate(-144deg); animation-duration: 5.6s; }
+.sq-8  { transform: rotate(252deg) translate(100px) rotate(-252deg); animation-duration: 6.8s; width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+
+/* Радиус 3: ~180px (у края) */
+.sq-9  { transform: rotate(180deg) translate(180px) rotate(-180deg); animation-duration: 7.2s; width: 10px; height: 10px; margin: -5px 0 0 -5px; }
+.sq-10 { transform: rotate(0deg)   translate(180px) rotate(0deg);    animation-duration: 6.2s; width: 14px; height: 14px; margin: -7px 0 0 -7px; }
+
+/* Вращение вокруг своей оси + мерцание + пульс */
 @keyframes squareSpin {
-    0%   { transform: rotate(0deg)   scale(1);    opacity: 0.5; }
-    25%  { transform: rotate(90deg)  scale(1.15); opacity: 1;   }
-    50%  { transform: rotate(180deg) scale(1);    opacity: 0.7; }
-    75%  { transform: rotate(270deg) scale(1.15); opacity: 1;   }
-    100% { transform: rotate(360deg) scale(1);    opacity: 0.5; }
+    0%   { opacity: 0.35; filter: brightness(1);    }
+    25%  { opacity: 1;    filter: brightness(1.3);  }
+    50%  { opacity: 0.7;  filter: brightness(1);    }
+    75%  { opacity: 1;    filter: brightness(1.3);  }
+    100% { opacity: 0.35; filter: brightness(1);    }
 }
 
-/* ============================================================
-   НЕБО С САМОЛЁТОМ
-   ============================================================ */
-.splash-sky {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 380px;
-    height: auto;
-    display: block;
-    overflow: visible;
+/* Дополнительное вращение самого квадратика поверх позиции */
+.splash-square::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: 2px solid currentColor;
+    animation: squareRotate 6s linear infinite;
 }
 
-/* Сердечко — рисуется линией */
-.splash-heart {
-    stroke-dasharray: 900;
-    stroke-dashoffset: 900;
-    animation: heartDraw 3s ease-in-out 0.6s forwards;
-    filter: drop-shadow(0 2px 0 rgba(217, 122, 108, 0.25));
-}
-
-@keyframes heartDraw {
-    0%   { stroke-dashoffset: 900; opacity: 1; }
-    100% { stroke-dashoffset: 0;   opacity: 1; }
-}
-
-/* Самолётик — летит по контуру сердечка */
-.splash-plane {
-    /* Если браузер поддерживает offset-path — летит по контуру */
-    offset-path: path("M 200 100 C 200 70, 160 50, 130 70 C 100 90, 100 130, 130 160 L 200 230 L 270 160 C 300 130, 300 90, 270 70 C 240 50, 200 70, 200 100 Z");
-    offset-rotate: auto;
-    offset-distance: 0%;
-    animation: planeFlyAlongHeart 3s ease-in-out 0.6s forwards;
-    filter: drop-shadow(0 1px 0 rgba(74, 58, 42, 0.3));
-}
-
-@keyframes planeFlyAlongHeart {
-    0%   { offset-distance: 0%;   opacity: 0; transform: scale(0.8); }
-    5%   { opacity: 1; }
-    95%  { opacity: 1; }
-    100% { offset-distance: 100%; opacity: 0; transform: scale(0.8); }
-}
-
-/* ============================================================
-   FALLBACK для браузеров без offset-path
-   Самолётик просто летит по прямой слева-направо
-   ============================================================ */
-@supports not (offset-path: path("M 0 0 L 1 1")) {
-    .splash-plane {
-        offset-path: none;
-        animation: planeFlyFallback 3s ease-in-out 0.6s forwards;
-    }
-
-    @keyframes planeFlyFallback {
-        0%   { transform: translate(-30px, 160px) rotate(-20deg); opacity: 0; }
-        10%  { opacity: 1; }
-        50%  { transform: translate(180px, 100px) rotate(0deg); }
-        90%  { opacity: 1; }
-        100% { transform: translate(400px, 160px) rotate(20deg); opacity: 0; }
-    }
+@keyframes squareRotate {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* ============================================================
@@ -987,7 +957,7 @@ strong { color: var(--ink); font-weight: 700; }
     text-shadow:
         3px 3px 0 var(--accent),
         6px 6px 0 rgba(74, 58, 42, 0.15);
-    animation: logoPop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) 3.2s forwards;
+    animation: logoPop 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.4) 0.8s forwards;
     opacity: 0;
     transform: scale(0.6);
     line-height: 1.3;
@@ -1011,7 +981,7 @@ strong { color: var(--ink); font-weight: 700; }
     text-transform: uppercase;
     letter-spacing: 3px;
     opacity: 0;
-    animation: subFade 0.6s ease 3.6s forwards;
+    animation: subFade 0.6s ease 1.2s forwards;
     text-align: center;
 }
 
@@ -1026,8 +996,7 @@ strong { color: var(--ink); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) {
     .splash-screen { animation-duration: 0.01ms !important; }
     .splash-square,
-    .splash-plane,
-    .splash-heart,
+    .splash-square::before,
     .splash-logo,
     .splash-sub {
         animation-duration: 0.01ms !important;
