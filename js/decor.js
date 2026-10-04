@@ -306,25 +306,20 @@ function generateBgDots(){
    СКРИМЕР — кошачье лицо
    ============================================================ */
 function catJumpscare(){
-    // Кулдаун 2 минуты (120 000 мс)
+    // Кулдаун 2 минуты
     const lastScare = localStorage.getItem('cat_scare_time');
     const now = Date.now();
 
     if (lastScare && (now - parseInt(lastScare)) < 120000){
-        // Ещё рано — не показываем
         return;
     }
 
-    // Отмечаем время
     localStorage.setItem('cat_scare_time', now.toString());
 
-    // 1. Запускаем хоррор-режим (серый экран, всё замирает)
+    // 1. Хоррор-режим (серый, замерло)
     document.body.classList.add('horror-mode');
 
-    // 2. Звук — крик кошки
-    playCatScream();
-
-    // 3. Через 2 секунды — скример
+    // 2. Через 2 секунды — тишина, потом скример
     setTimeout(() => {
         const jumpscare = document.getElementById('catJumpscare');
         const face = document.getElementById('catFace');
@@ -332,22 +327,24 @@ function catJumpscare(){
 
         if (!jumpscare) return;
 
-        // Показываем лицо
+        // 3. ЗВУК — ИМЕННО В МОМЕНТ ПОЯВЛЕНИЯ ЛИЦА
+        playCatScream();
+
+        // 4. Показываем лицо
         jumpscare.classList.add('active');
         face.classList.add('shake');
 
-        // Вспышка
+        // 5. Вспышка
         if (flash){
             flash.classList.add('active');
             setTimeout(() => flash.classList.remove('active'), 500);
         }
 
-        // 4. Через 1.5 сек — убираем скример
+        // 6. Через 1.5 сек — убираем
         setTimeout(() => {
             jumpscare.classList.remove('active');
             face.classList.remove('shake');
 
-            // 5. Через 0.5 сек — выходим из хоррор-режима
             setTimeout(() => {
                 document.body.classList.remove('horror-mode');
             }, 500);
