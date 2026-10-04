@@ -4,8 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#f5ecd9">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Симулятор жизни — Благовещенск</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -14,31 +19,31 @@
 <body>
 
 <!-- ФОНОВЫЕ ЭФФЕКТЫ -->
-<div class="bg-pattern"></div>
-<div class="bg-lines">
+<div class="bg-pattern" aria-hidden="true"></div>
+<div class="bg-lines" aria-hidden="true">
     <div class="line"></div>
     <div class="line"></div>
     <div class="line"></div>
     <div class="line"></div>
     <div class="line"></div>
 </div>
-<div class="bg-blobs">
+<div class="bg-blobs" aria-hidden="true">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 </div>
-<div class="bg-dots" id="bgDots"></div>
-<div class="stars-bg" id="starsBg"></div>
-<div class="fg-decor" id="fgDecor"></div>
-<div class="rain-bg" id="rainBg"></div>
-<div class="fog-bg" id="fogBg"></div>
-<div class="lamps-bg" id="lampsBg"></div>
-<div class="disco-bg" id="discoBg"></div>
+<div class="bg-dots" id="bgDots" aria-hidden="true"></div>
+<div class="stars-bg" id="starsBg" aria-hidden="true"></div>
+<div class="fg-decor" id="fgDecor" aria-hidden="true"></div>
+<div class="rain-bg" id="rainBg" aria-hidden="true"></div>
+<div class="fog-bg" id="fogBg" aria-hidden="true"></div>
+<div class="lamps-bg" id="lampsBg" aria-hidden="true"></div>
+<div class="disco-bg" id="discoBg" aria-hidden="true"></div>
 
 <!-- ОВЕРЛЕЙ ПЕРЕХОДА -->
-<div class="transition-overlay" id="transitionOverlay"></div>
+<div class="transition-overlay" id="transitionOverlay" aria-hidden="true"></div>
 
 <!-- СКРИМЕР — кошачье лицо -->
-<div class="cat-jumpscare" id="catJumpscare">
+<div class="cat-jumpscare" id="catJumpscare" aria-hidden="true">
     <div class="cat-face" id="catFace">
         <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
             <g>
@@ -88,7 +93,7 @@
 </div>
 
 <!-- ВСПЫШКА -->
-<div class="cat-flash" id="catFlash"></div>
+<div class="cat-flash" id="catFlash" aria-hidden="true"></div>
 
 <!-- ЗАСТАВКА -->
 <div class="splash-screen" id="splashScreen">
@@ -117,6 +122,7 @@
         <p>У тебя есть мама. Больше никого. Ты сам решаешь, кем станешь.</p>
         <p>Каждый выбор — навсегда.</p>
         <button class="btn btn-primary btn-full" onclick="showCreate()">Начать</button>
+        <button class="btn btn-full" id="continueBtn" onclick="continueGame()" style="display:none; margin-top:12px;">Продолжить</button>
     </div>
 </div>
 
@@ -124,8 +130,8 @@
 <div class="screen" id="createScreen" style="display:none;">
     <div class="card">
         <h2>Создай персонажа</h2>
-        <label class="field-label">Имя</label>
-        <input type="text" class="text-input" id="nameInput" placeholder="Введи имя" maxlength="20">
+        <label class="field-label" for="nameInput">Имя</label>
+        <input type="text" class="text-input" id="nameInput" placeholder="Введи имя" maxlength="20" autocomplete="off">
         <label class="field-label">Пол</label>
         <div class="gender-row">
             <button class="gender-btn" id="genderM" onclick="selectGender('🧑','genderM')">🧑 Парень</button>
@@ -241,13 +247,20 @@
 </div>
 
 <!-- СКРИПТЫ -->
-<script src="js/engine.js"></script>
-<script src="js/decor.js"></script>
-<script src="js/story-act1.js"></script>
-<script src="js/story-act2.js"></script>
-<script src="js/main.js"></script>
-
-</body>
+<script src="js/engine.js" defer></script>
+<script src="js/decor.js" defer></script>
+<script src="js/story-act1.js" defer></script>
+<script src="js/story-act2.js" defer></script>
+<script src="js/main.js" defer></script>
+<script>
+    // Показать кнопку "Продолжить", если есть сохранение
+    window.addEventListener('load', function(){
+        if (typeof hasSave === 'function' && hasSave()){
+            const btn = document.getElementById('continueBtn');
+            if (btn) btn.style.display = 'inline-flex';
+        }
+    });
+</script>
 
 </body>
 </html>
