@@ -46,10 +46,14 @@ Object.assign(
     try { tg.expand(); } catch(e){}
 
     if (version >= 6.1){
-        try { tg.disableVerticalSwipes(); } catch(e){}
-        try { tg.setHeaderColor('#f5ecd9'); } catch(e){}
-        try { tg.setBackgroundColor('#f5ecd9'); } catch(e){}
-    }
+    try { tg.setHeaderColor('#f5ecd9'); } catch(e){}
+    try { tg.setBackgroundColor('#f5ecd9'); } catch(e){}
+}
+
+// Разрешаем вертикальные свайпы — иначе скролл в мини-аппе не работает
+if (version >= 7.0){
+    try { tg.enableVerticalSwipes(); } catch(e){}
+}
 
     if (tg.initDataUnsafe && tg.initDataUnsafe.user){
         const user = tg.initDataUnsafe.user;
