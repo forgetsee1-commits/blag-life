@@ -57,22 +57,18 @@ html, body {
     color: var(--ink);
     background: var(--bg);
     overflow-x: hidden;
-    overscroll-behavior-y: contain;
     -webkit-font-smoothing: none;
     image-rendering: pixelated;
-    touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
 }
 
 body {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    display: block;
     padding: 0;
     overflow-y: auto;
+    min-height: 100dvh;
     transition: background 0.8s ease;
-    will-change: background;
 }
 
 body::before {
