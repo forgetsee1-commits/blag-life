@@ -215,15 +215,13 @@
     <div class="scene-box" id="sceneBox"></div>
 </div>
 
-<!-- ПОЛЗУНОК ГРОМКОСТИ -->
-<div class="volume-control" id="volumeControl">
-    <span class="volume-icon" id="volumeIcon">🔊</span>
-    <input type="range" id="volumeSlider" min="0" max="100" value="50">
-</div>
-
 <!-- FAB MENU -->
 <div class="fab-container" id="fabContainer">
     <div class="fab-menu" id="fabMenu">
+        <div class="fab-item fab-volume">
+            <span class="fab-icon" id="volumeIcon">🔊</span>
+            <input type="range" id="volumeSlider" min="0" max="100" value="50" class="fab-slider">
+        </div>
         <button class="fab-item" onclick="saveGame(); closeFab();">
             <span class="fab-icon">💾</span>
             <span class="fab-label">Сохранить</span>
