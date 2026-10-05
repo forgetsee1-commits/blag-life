@@ -57,7 +57,7 @@ html, body {
     color: var(--ink);
     background: var(--bg);
     overflow-x: hidden;
-    overscroll-behavior: none;
+    overscroll-behavior-y: contain;
     -webkit-font-smoothing: none;
     image-rendering: pixelated;
     touch-action: manipulation;
@@ -256,7 +256,6 @@ body[data-time="night"] {
     padding: 88px 16px calc(40px + var(--safe-bottom));
     padding-top: calc(88px + var(--safe-top));
     margin: 0 auto;
-    min-height: 100dvh;
 }
 
 /* ============================================================
