@@ -7,7 +7,7 @@
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Симулятор жизни — Благовещенск</title>
+<title>Лайф Блага — симулятор жизни</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<!-- ФОНОВЫЕ ЭФФЕКТЫ -->
+<!-- ФОН -->
 <div class="bg-pattern" aria-hidden="true"></div>
 <div class="bg-lines" aria-hidden="true">
     <div class="line"></div>
@@ -95,11 +95,9 @@
 <!-- ВСПЫШКА -->
 <div class="cat-flash" id="catFlash" aria-hidden="true"></div>
 
-<!-- ЗАСТАВКА -->
+<!-- ЗАСТАВКА — ретро-квадраты -->
 <div class="splash-screen" id="splashScreen">
     <div class="splash-inner">
-
-        <!-- Ретро-пиксельные квадраты -->
         <div class="splash-squares">
             <span class="splash-square sq-1"></span>
             <span class="splash-square sq-2"></span>
@@ -111,9 +109,9 @@
             <span class="splash-square sq-8"></span>
             <span class="splash-square sq-9"></span>
             <span class="splash-square sq-10"></span>
+            <span class="splash-square sq-11"></span>
+            <span class="splash-square sq-12"></span>
         </div>
-
-        <!-- Логотип -->
         <div class="splash-logo">ЛАЙФ БЛАГА</div>
         <div class="splash-sub">жизнь в благовещенске</div>
     </div>
@@ -123,9 +121,9 @@
 <div class="screen" id="startScreen">
     <div class="card">
         <h1>Симулятор <span class="accent">жизни</span></h1>
-        <p class="subtitle">Благовещенск. Бедный район.</p>
-        <p>У тебя есть мама. Больше никого. Ты сам решаешь, кем станешь.</p>
-        <p>Каждый выбор — навсегда.</p>
+        <p class="subtitle">Благовещенск. 14 лет. Новая школа.</p>
+        <p>Ты только что переехал в Низа. Мама работает поваром в кафе на Инзе. Ты перевёлся в 4-ю школу. Никого здесь не знаешь.</p>
+        <p>Что ждёт впереди — зависит от тебя.</p>
         <button class="btn btn-primary btn-full" onclick="showCreate()">Начать</button>
         <button class="btn btn-full" id="continueBtn" onclick="continueGame()" style="display:none; margin-top:12px;">Продолжить</button>
     </div>
@@ -149,11 +147,11 @@
 <!-- ПРОЛОГ 1 -->
 <div class="screen" id="prologue1" style="display:none;">
     <div class="card">
-        <div class="scene-emoji">👶</div>
+        <div class="scene-emoji">🧒</div>
         <h2 class="text-center" id="prologue1Title">Ты родился</h2>
-        <p>Благовещенск. Маленький роддом на окраине города.</p>
-        <p>На тебя смотрит уставшая, но счастливая женщина — твоя мама. Отца нет — он ушёл, когда узнал о твоём рождении.</p>
-        <p>Мама работает на заводе за копейки. Она держит тебя на руках и тихо шепчет: «Мы справимся. Обещаю».</p>
+        <p>Благовещенск. Роддом в центральной больнице. Мама держит тебя на руках, плачет и улыбается одновременно.</p>
+        <p>Отца нет рядом. Он уехал в Хабаровск — «на заработки». Мама не рассказывает больше. Ты потом сам узнаешь.</p>
+        <p>Живёте вы в Низах. Съёмная квартира. Дешёвая. Но своя.</p>
         <button class="btn btn-primary btn-full" onclick="showScreen('prologue2')" style="margin-top:16px;">Дальше</button>
     </div>
 </div>
@@ -161,11 +159,11 @@
 <!-- ПРОЛОГ 2 -->
 <div class="screen" id="prologue2" style="display:none;">
     <div class="card">
-        <div class="scene-emoji">🧸</div>
-        <h2 class="text-center">4 года</h2>
-        <p>Тебе 4. Первый день в детском саду.</p>
-        <p>Дети играют, ссорятся, плачут. У всех есть папы, которые их забирают. У тебя — только мама.</p>
-        <p>Вечером она берёт тебя за руку и ведёт домой. По дороге покупает мороженое — последнее, что было в кошельке.</p>
+        <div class="scene-emoji">🏫</div>
+        <h2 class="text-center">Школа №3 «новая»</h2>
+        <p>Ты учился в 3-й новой школе — это на ГАИ. Три года отучился. Были свои пацаны, свои учителя, свои драки.</p>
+        <p>Но мама перевелась на новую работу — в кафе на Инзе. Ездить через весь город каждый день — не вариант.</p>
+        <p>Так ты оказался тут. В 4-й школе. Один. Никого не знаешь.</p>
         <button class="btn btn-primary btn-full" onclick="showScreen('prologue3')" style="margin-top:16px;">Дальше</button>
     </div>
 </div>
@@ -173,24 +171,11 @@
 <!-- ПРОЛОГ 3 -->
 <div class="screen" id="prologue3" style="display:none;">
     <div class="card">
-        <div class="scene-emoji">🎒</div>
-        <h2 class="text-center">6 лет</h2>
-        <p>Тебе 6. Первый звонок. Белый бант, галстук, портфель.</p>
-        <p>Школа №2 — на другом конце района. Туда ходит мама, там работал кто-то из её знакомых. Учителя строгие, дети разные.</p>
-        <p>Первый урок. Учительница обводит класс глазами и улыбается тебе. Ты ещё не знаешь, что через три года это место придётся оставить.</p>
-        <button class="btn btn-primary btn-full" onclick="showScreen('prologue4')" style="margin-top:16px;">Дальше</button>
-    </div>
-</div>
-
-<!-- ПРОЛОГ 4 -->
-<div class="screen" id="prologue4" style="display:none;">
-    <div class="card">
         <div class="scene-emoji">🌆</div>
-        <h2 class="text-center">10 лет</h2>
-        <p>Тебе 10. Мама работает на двух работах. Денег всё равно не хватает — на ужин часто одна картошка.</p>
-        <p>Три года ты отучился в школе №2 — на другом конце района. Там были свои пацаны, свои драки, свои учителя. Но мама поругалась с завучем — и тебя перевели. Теперь ты идёшь в школу №3. Дворовую, ближе к дому. Там ты никого не знаешь.</p>
-        <p>Ты уже понимаешь: в этом районе либо ты кем-то становишься, либо тебя ломают. Двор учит быстро.</p>
-        <p><strong>Сегодня 1 сентября. Первый день в новой школе.</strong> С этого дня начинается твоя история.</p>
+        <h2 class="text-center">14 лет</h2>
+        <p>Тебе 14. Ты в 8 классе. Завтра — 1 сентября. Первый день в новой школе.</p>
+        <p>Ты не знаешь, кто там учится. Не знаешь, какие там правила. Не знаешь, что будет дальше.</p>
+        <p>Но что-то подсказывает — будет интересно.</p>
         <button class="btn btn-primary btn-full" onclick="startLife()" style="margin-top:16px;">Начать жизнь</button>
     </div>
 </div>
@@ -223,11 +208,17 @@
         </div>
         <div class="resource-item">
             <div class="resource-label">Возраст</div>
-            <div class="resource-value" id="resAge">10</div>
+            <div class="resource-value" id="resAge">14</div>
         </div>
     </div>
 
     <div class="scene-box" id="sceneBox"></div>
+</div>
+
+<!-- ПОЛЗУНОК ГРОМКОСТИ -->
+<div class="volume-control" id="volumeControl">
+    <span class="volume-icon" id="volumeIcon">🔊</span>
+    <input type="range" id="volumeSlider" min="0" max="100" value="50">
 </div>
 
 <!-- FAB MENU -->
@@ -241,9 +232,9 @@
             <span class="fab-icon">🔗</span>
             <span class="fab-label">Реферал</span>
         </button>
-        <button class="fab-item" onclick="showScene('act_select'); closeFab();">
-            <span class="fab-icon">📖</span>
-            <span class="fab-label">Выбор акта</span>
+        <button class="fab-item" onclick="resetGame(); closeFab();">
+            <span class="fab-icon">🔄</span>
+            <span class="fab-label">Заново</span>
         </button>
     </div>
     <button class="fab-main" id="fabMain" onclick="toggleFab()">
@@ -252,18 +243,23 @@
 </div>
 
 <!-- СКРИПТЫ -->
+ <script src="js/audio.js" defer></script>
 <script src="js/engine.js" defer></script>
 <script src="js/decor.js" defer></script>
-<script src="js/story-act1.js" defer></script>
-<script src="js/story-act2.js" defer></script>
+<script src="js/story-act1-boy.js" defer></script>
+<script src="js/story-act1-girl.js" defer></script>
+<script src="js/commonNodes.js" defer></script>
 <script src="js/main.js" defer></script>
+
 <script>
     // Показать кнопку "Продолжить", если есть сохранение
     window.addEventListener('load', function(){
-        if (typeof hasSave === 'function' && hasSave()){
-            const btn = document.getElementById('continueBtn');
-            if (btn) btn.style.display = 'inline-flex';
-        }
+        setTimeout(function(){
+            if (typeof hasSave === 'function' && hasSave()){
+                const btn = document.getElementById('continueBtn');
+                if (btn) btn.style.display = 'inline-flex';
+            }
+        }, 100);
     });
 </script>
 
