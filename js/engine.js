@@ -659,7 +659,8 @@ function getDayScene(){
             return schedule[s] || null;
         } else {
             const schedule = {
-                1: { button: '📅 Первый день в новой школе', scene: 'b_day1_start' }
+                1: { button: '📅 Первый день в новой школе', scene: 'b_day1_start' },
+                2: { button: '📅 Дистант · беспилотка', scene: 'b_day2_start' }
             };
             return schedule[s] || null;
         }
